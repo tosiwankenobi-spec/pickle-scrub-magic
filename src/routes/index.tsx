@@ -159,7 +159,7 @@ function Dashboard() {
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
             ) : scanUndoStatus === "success" ? (
               <CheckCircle2 className="h-10 w-10 text-emerald-500" />
-            ) : scanUndoStatus === "error" ? (
+            ) : scanUndoStatus === "retry-error" || scanUndoStatus === "error" ? (
               <XCircle className="h-10 w-10 text-destructive" />
             ) : scanStatus === "cancelling" ? (
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -169,6 +169,7 @@ function Dashboard() {
               <AnimatedPickleIcon size={44} scanning={scanning} />
             )
           }
+
 
 
           onClick={() => {
