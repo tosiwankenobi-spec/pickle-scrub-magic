@@ -74,7 +74,7 @@ function HomePage() {
 }
 
 function Dashboard() {
-  const { startScan, cancelScan, scanning, scanProgress, duplicateCount } = usePickle();
+  const { startScan, cancelScan, scanning, scanProgress, scanStatus, duplicateCount } = usePickle();
   const usedPct = (USED_STORAGE / TOTAL_STORAGE) * 100;
   const reclaimPct = (RECLAIMABLE / TOTAL_STORAGE) * 100;
 
@@ -107,7 +107,15 @@ function Dashboard() {
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <ActionTile
           title="Scan"
-          description={scanning ? "Tap to cancel scan" : "Find duplicates and junk"}
+          description={
+            scanning
+              ? "Tap to cancel scan"
+              : scanStatus === "cancelling"
+                ? "Cancelling…"
+                : scanStatus === "cancelled"
+                  ? "Cancelled"
+                  : "Find duplicates and junk"
+          }
           icon={<AnimatedPickleIcon size={44} scanning={scanning} />}
           onClick={() => {
             if (scanning) {

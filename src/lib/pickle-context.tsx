@@ -31,6 +31,7 @@ export type PickleContextType = {
   setSelected: React.Dispatch<React.SetStateAction<Set<string>>>;
   scanning: boolean;
   scanProgress: number;
+  scanStatus: "idle" | "cancelling" | "cancelled";
   startScan: () => void;
   cancelScan: () => void;
   filteredGroups: DuplicateGroup[];
@@ -77,8 +78,10 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   const [scanning, setScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const scanProgressRef = useRef(scanProgress);
+  const [scanStatus, setScanStatus] = useState<"idle" | "cancelling" | "cancelled">("idle");
   const [hydrated, setHydrated] = useState(false);
   const scanTimer = useRef<number | null>(null);
+  const statusTimer = useRef<number | null>(null);
 
   useEffect(() => {
     scanProgressRef.current = scanProgress;
@@ -133,6 +136,7 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     return () => {
       if (scanTimer.current) window.clearInterval(scanTimer.current);
+      if (statusTimer.current) window.clearTimeout(statusTimer.current);
     };
   }, []);
 
@@ -180,7 +184,16 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
 
   const clearSelection = () => setSelected(new Set());
 
+  const clearStatusTimer = () => {
+    if (statusTimer.current) {
+      window.clearTimeout(statusTimer.current);
+      statusTimer.current = null;
+    }
+  };
+
   const startScan = (resumeFrom = 0) => {
+    clearStatusTimer();
+    setScanStatus("idle");
     setScanning(true);
     setScanProgress(resumeFrom);
     if (scanTimer.current) window.clearInterval(scanTimer.current);
@@ -204,6 +217,15 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     if (scanTimer.current) window.clearInterval(scanTimer.current);
     setScanning(false);
     setScanProgress(0);
+    clearStatusTimer();
+    setScanStatus("cancelling");
+    statusTimer.current = window.setTimeout(() => {
+      setScanStatus("cancelled");
+      statusTimer.current = window.setTimeout(() => {
+        setScanStatus("idle");
+        statusTimer.current = null;
+      }, 1400);
+    }, 800) as unknown as number;
     toast("Scan cancelled", {
       description: "No changes were made.",
       action: {
@@ -267,6 +289,7 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     setSelected,
     scanning,
     scanProgress,
+    scanStatus,
     startScan,
     cancelScan,
     filteredGroups,
