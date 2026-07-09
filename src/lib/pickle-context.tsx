@@ -32,6 +32,8 @@ export type PickleContextType = {
   scanning: boolean;
   scanProgress: number;
   scanStatus: "idle" | "cancelling" | "cancelled" | "error";
+  scanUndoStatus: "idle" | "undoing";
+
   startScan: () => void;
   cancelScan: () => void;
   scanUndoStack: ScanUndoEntry[];
