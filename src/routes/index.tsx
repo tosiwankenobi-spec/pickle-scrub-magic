@@ -147,7 +147,7 @@ function Dashboard() {
 
 
           icon={
-            scanUndoStatus === "undoing" ? (
+            scanUndoStatus === "retrying" || scanUndoStatus === "undoing" ? (
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
             ) : scanUndoStatus === "error" ? (
               <XCircle className="h-10 w-10 text-destructive" />
@@ -159,6 +159,7 @@ function Dashboard() {
               <AnimatedPickleIcon size={44} scanning={scanning} />
             )
           }
+
           onClick={() => {
             if (scanUndoStatus === "error") {
               undoScanAction();
