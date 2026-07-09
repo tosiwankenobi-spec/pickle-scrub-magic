@@ -380,7 +380,7 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     };
     setHistory((h) => [entry, ...h]);
     toast.success(`Reclaimed ${formatBytes(removedBytes)}`, {
-      description: `${removed.length} file${removed.length === 1 ? "" : "s"} scrubbed clean.`,
+      description: `${removed.length} file${removed.length === 1 ? "" : "s"} cleaned.`,
       action: {
         label: "Undo",
         onClick: () => {
