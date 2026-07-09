@@ -71,7 +71,7 @@ type PersistedState = {
 const PickleContext = createContext<PickleContextType | null>(null);
 
 export function PickleProvider({ children }: { children: React.ReactNode }) {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const [minDupSize, setMinDupSize] = useState(1); // MB
   const [scanDepth, setScanDepth] = useState<"quick" | "standard" | "deep">("standard");
   const [enabledTypes, setEnabledTypes] = useState<Record<FileType, boolean>>({
