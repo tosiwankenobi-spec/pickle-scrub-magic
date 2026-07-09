@@ -10,12 +10,7 @@ export type ScanUndoStatus =
   | "retry-error"
   | "success";
 
-export type ScanStatus =
-  | "idle"
-  | "scanning"
-  | "cancelling"
-  | "cancelled"
-  | "error";
+export type ScanStatus = "idle" | "cancelling" | "cancelled" | "error";
 
 export function getScanCardDescription(
   scanUndoStatus: ScanUndoStatus,
