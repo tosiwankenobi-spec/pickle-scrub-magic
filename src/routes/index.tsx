@@ -200,6 +200,7 @@ type ActionTileProps = {
   icon: React.ReactNode;
   badge?: string;
   accent?: boolean;
+  disabled?: boolean;
 } & (
   | { to: "/clean" | "/duplicates" | "/history" | "/settings" | "/roadmap"; onClick?: () => void }
   | { to?: undefined; onClick: () => void }
@@ -213,13 +214,22 @@ function ActionTile({
   onClick,
   badge,
   accent,
+  disabled,
 }: ActionTileProps) {
   const card = (
     <Card
-      className={`group cursor-pointer transition active:scale-[0.98] ${
+      className={`group transition ${
+        disabled
+          ? "cursor-not-allowed opacity-70"
+          : "cursor-pointer active:scale-[0.98]"
+      } ${
         accent
-          ? "border-primary/40 bg-primary/5 hover:border-primary/60 hover:bg-primary/10"
-          : "hover:border-primary/40 hover:bg-accent/30"
+          ? disabled
+            ? "border-primary/30 bg-primary/5"
+            : "border-primary/40 bg-primary/5 hover:border-primary/60 hover:bg-primary/10"
+          : disabled
+            ? "bg-accent/20"
+            : "hover:border-primary/40 hover:bg-accent/30"
       }`}
     >
       <CardContent className="flex flex-col items-start gap-3 p-4 pt-5 md:p-5 md:pt-6">
@@ -255,7 +265,12 @@ function ActionTile({
     );
   }
   return (
-    <button type="button" onClick={onClick} className="text-left">
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className="text-left"
+    >
       {card}
     </button>
   );
