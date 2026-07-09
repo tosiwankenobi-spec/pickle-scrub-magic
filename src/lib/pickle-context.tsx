@@ -303,35 +303,50 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   };
 
   const undoScanAction = () => {
-    if (scanUndoStatus === "undoing") return;
+    if (scanUndoStatus === "undoing" || scanUndoStatus === "error") return;
     setScanUndoStatus("undoing");
     if (undoStatusTimer.current) window.clearTimeout(undoStatusTimer.current);
 
-    setScanUndoStack((stack) => {
-      if (stack.length === 0) {
-        setScanUndoStatus("idle");
-        return stack;
-      }
-      const next = stack.slice(0, -1);
-      const last = stack[stack.length - 1];
-      // Restore the snapshot captured before that action.
-      if (last.prev.scanning) {
-        runScan(last.prev.progress);
-        toast("Resumed scan", {
-          description: `Continuing from ${last.prev.progress}%.`,
-        });
-      } else {
-        stopScan();
-        toast("Reverted", { description: "Scan is idle again." });
-      }
-      return next;
-    });
+    undoAttemptsRef.current += 1;
+    const willFail = undoAttemptsRef.current % 2 === 1;
 
     undoStatusTimer.current = window.setTimeout(() => {
-      setScanUndoStatus("idle");
-      undoStatusTimer.current = null;
+      if (willFail) {
+        setScanUndoStatus("error");
+        toast.error("Undo failed", {
+          description: "Could not roll back the last scan action. Try again.",
+        });
+        undoStatusTimer.current = window.setTimeout(() => {
+          setScanUndoStatus("idle");
+          undoStatusTimer.current = null;
+        }, 3000) as unknown as number;
+        return;
+      }
+
+      setScanUndoStack((stack) => {
+        if (stack.length === 0) return stack;
+        const next = stack.slice(0, -1);
+        const last = stack[stack.length - 1];
+        // Restore the snapshot captured before that action.
+        if (last.prev.scanning) {
+          runScan(last.prev.progress);
+          toast("Resumed scan", {
+            description: `Continuing from ${last.prev.progress}%.`,
+          });
+        } else {
+          stopScan();
+          toast("Reverted", { description: "Scan is idle again." });
+        }
+        return next;
+      });
+
+      undoStatusTimer.current = window.setTimeout(() => {
+        setScanUndoStatus("idle");
+        undoStatusTimer.current = null;
+      }, 600) as unknown as number;
     }, 600) as unknown as number;
   };
+
 
 
   const clearScanUndoHistory = () => setScanUndoStack([]);
