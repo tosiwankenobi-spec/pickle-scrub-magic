@@ -32,6 +32,8 @@ export type PickleContextType = {
   scanning: boolean;
   scanProgress: number;
   scanStatus: "idle" | "cancelling" | "cancelled" | "error";
+  scanUndoStatus: "idle" | "undoing";
+
   startScan: () => void;
   cancelScan: () => void;
   scanUndoStack: ScanUndoEntry[];
@@ -92,9 +94,13 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   const cancelAttemptsRef = useRef(0);
   const [scanStatus, setScanStatus] = useState<"idle" | "cancelling" | "cancelled" | "error">("idle");
   const [scanUndoStack, setScanUndoStack] = useState<ScanUndoEntry[]>([]);
+  const [scanUndoStatus, setScanUndoStatus] = useState<"idle" | "undoing">("idle");
+
   const [hydrated, setHydrated] = useState(false);
   const scanTimer = useRef<number | null>(null);
   const statusTimer = useRef<number | null>(null);
+  const undoStatusTimer = useRef<number | null>(null);
+
 
   useEffect(() => {
     scanProgressRef.current = scanProgress;
@@ -150,8 +156,10 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     return () => {
       if (scanTimer.current) window.clearInterval(scanTimer.current);
       if (statusTimer.current) window.clearTimeout(statusTimer.current);
+      if (undoStatusTimer.current) window.clearTimeout(undoStatusTimer.current);
     };
   }, []);
+
 
   const filteredGroups = useMemo(() => {
     const minBytes = minDupSize * 1024 * 1024;
@@ -293,8 +301,15 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   };
 
   const undoScanAction = () => {
+    if (scanUndoStatus === "undoing") return;
+    setScanUndoStatus("undoing");
+    if (undoStatusTimer.current) window.clearTimeout(undoStatusTimer.current);
+
     setScanUndoStack((stack) => {
-      if (stack.length === 0) return stack;
+      if (stack.length === 0) {
+        setScanUndoStatus("idle");
+        return stack;
+      }
       const next = stack.slice(0, -1);
       const last = stack[stack.length - 1];
       // Restore the snapshot captured before that action.
@@ -309,7 +324,13 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
       }
       return next;
     });
+
+    undoStatusTimer.current = window.setTimeout(() => {
+      setScanUndoStatus("idle");
+      undoStatusTimer.current = null;
+    }, 600) as unknown as number;
   };
+
 
   const clearScanUndoHistory = () => setScanUndoStack([]);
 
@@ -368,6 +389,8 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     scanning,
     scanProgress,
     scanStatus,
+    scanUndoStatus,
+
     startScan,
     cancelScan,
     scanUndoStack,

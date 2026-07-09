@@ -82,11 +82,13 @@ function Dashboard() {
     scanning,
     scanProgress,
     scanStatus,
+    scanUndoStatus,
     duplicateCount,
     scanUndoStack,
     undoScanAction,
     clearScanUndoHistory,
   } = usePickle();
+
   const usedPct = (USED_STORAGE / TOTAL_STORAGE) * 100;
   const reclaimPct = (RECLAIMABLE / TOTAL_STORAGE) * 100;
   const lastUndo = scanUndoStack[scanUndoStack.length - 1];
@@ -126,18 +128,22 @@ function Dashboard() {
         <ActionTile
           title="Scan"
           description={
-            scanStatus === "error"
-              ? "Cancel failed"
-              : scanStatus === "cancelling"
-                ? "Cancelling…"
-                : scanning
-                  ? "Tap to cancel scan"
-                  : scanStatus === "cancelled"
-                    ? "Cancelled"
-                    : "Find duplicates and junk"
+            scanUndoStatus === "undoing"
+              ? "Undoing…"
+              : scanStatus === "error"
+                ? "Cancel failed"
+                : scanStatus === "cancelling"
+                  ? "Cancelling…"
+                  : scanning
+                    ? "Tap to cancel scan"
+                    : scanStatus === "cancelled"
+                      ? "Cancelled"
+                      : "Find duplicates and junk"
           }
           icon={
-            scanStatus === "cancelling" ? (
+            scanUndoStatus === "undoing" ? (
+              <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            ) : scanStatus === "cancelling" ? (
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
             ) : scanStatus === "error" ? (
               <XCircle className="h-10 w-10 text-destructive" />
@@ -154,8 +160,9 @@ function Dashboard() {
           }}
           badge={scanning ? `${scanProgress}%` : undefined}
           accent
-          disabled={scanStatus === "cancelling"}
+          disabled={scanStatus === "cancelling" || scanUndoStatus === "undoing"}
         />
+
         <ActionTile
           title="Clean"
           description="Clear caches & stale files"
