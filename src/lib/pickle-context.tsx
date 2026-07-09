@@ -76,8 +76,13 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   const [history, setHistory] = useState<HistoryEntry[]>(initialHistory);
   const [scanning, setScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
+  const scanProgressRef = useRef(scanProgress);
   const [hydrated, setHydrated] = useState(false);
   const scanTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    scanProgressRef.current = scanProgress;
+  }, [scanProgress]);
 
   // Hydrate from localStorage after mount (SSR-safe)
   useEffect(() => {
@@ -175,9 +180,9 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
 
   const clearSelection = () => setSelected(new Set());
 
-  const startScan = () => {
+  const startScan = (resumeFrom = 0) => {
     setScanning(true);
-    setScanProgress(0);
+    setScanProgress(resumeFrom);
     if (scanTimer.current) window.clearInterval(scanTimer.current);
     scanTimer.current = window.setInterval(() => {
       setScanProgress((p) => {
@@ -195,11 +200,17 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   };
 
   const cancelScan = () => {
+    const progressAtCancel = scanProgressRef.current;
     if (scanTimer.current) window.clearInterval(scanTimer.current);
     setScanning(false);
     setScanProgress(0);
     toast("Scan cancelled", {
       description: "No changes were made.",
+      action: {
+        label: "Undo",
+        onClick: () => startScan(progressAtCancel),
+      },
+      duration: 6000,
     });
   };
 
