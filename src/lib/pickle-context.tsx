@@ -37,7 +37,7 @@ export type PickleContextType = {
   startScan: () => void;
   cancelScan: () => void;
   scanUndoStack: ScanUndoEntry[];
-  undoScanAction: () => void;
+  undoScanAction: (isRetry?: boolean) => void;
   clearScanUndoHistory: () => void;
   filteredGroups: DuplicateGroup[];
   selectedFiles: MockFile[];
