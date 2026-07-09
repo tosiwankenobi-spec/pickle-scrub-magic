@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { toast } from "sonner";
 import {
   Sparkles,
-  Trash2,
   Copy,
   Wind as BroomIcon,
   History,
@@ -21,7 +19,7 @@ import {
   TOTAL_STORAGE,
   USED_STORAGE,
   RECLAIMABLE,
-  type FileType,
+  formatBytes,
 } from "@/lib/pickle-data";
 import { CountUpBytes, LegendDot } from "@/components/pickle/shared";
 
