@@ -342,6 +342,7 @@ function PickleApp() {
                   scanProgress={scanProgress}
                   goDuplicates={() => setView("duplicates")}
                   goCleanup={() => setView("cleanup")}
+                  goHistory={() => setView("history")}
                   duplicateCount={filteredGroups.reduce((n, g) => n + g.files.length - 1, 0)}
                 />
               )}
