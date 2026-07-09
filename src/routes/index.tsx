@@ -12,7 +12,7 @@ import {
   Package,
   Database,
   ShieldCheck,
-  Broom,
+  Wind as BroomIcon,
   Home,
   Copy,
   Wand2,
