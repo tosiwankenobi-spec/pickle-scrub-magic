@@ -93,6 +93,18 @@ const NAV: { id: ViewId; label: string; icon: React.ReactNode }[] = [
   { id: "roadmap", label: "Roadmap", icon: <Smartphone className="h-5 w-5" /> },
 ];
 
+const STORAGE_KEY = "pickle-polish:state:v1";
+
+type PersistedState = {
+  darkMode: boolean;
+  minDupSize: number;
+  scanDepth: "quick" | "standard" | "deep";
+  enabledTypes: Record<FileType, boolean>;
+  excluded: string[];
+  groups: DuplicateGroup[];
+  history: HistoryEntry[];
+};
+
 function PickleApp() {
   const [view, setView] = useState<ViewId>("onboarding");
   const [darkMode, setDarkMode] = useState(false);
@@ -114,7 +126,49 @@ function PickleApp() {
   const [history, setHistory] = useState<HistoryEntry[]>(initialHistory);
   const [scanning, setScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
+  const [hydrated, setHydrated] = useState(false);
   const scanTimer = useRef<number | null>(null);
+
+  // Hydrate from localStorage after mount (SSR-safe)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const s = JSON.parse(raw) as Partial<PersistedState>;
+        if (typeof s.darkMode === "boolean") setDarkMode(s.darkMode);
+        if (typeof s.minDupSize === "number") setMinDupSize(s.minDupSize);
+        if (s.scanDepth) setScanDepth(s.scanDepth);
+        if (s.enabledTypes) setEnabledTypes(s.enabledTypes);
+        if (Array.isArray(s.excluded)) setExcluded(s.excluded);
+        if (Array.isArray(s.groups)) setGroups(s.groups);
+        if (Array.isArray(s.history)) setHistory(s.history);
+      }
+      const onboarded = localStorage.getItem("pickle-polish:onboarded");
+      if (onboarded === "1") setView("dashboard");
+    } catch {
+      // ignore
+    }
+    setHydrated(true);
+  }, []);
+
+  // Persist on change
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      const payload: PersistedState = {
+        darkMode,
+        minDupSize,
+        scanDepth,
+        enabledTypes,
+        excluded,
+        groups,
+        history,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch {
+      // ignore quota errors
+    }
+  }, [hydrated, darkMode, minDupSize, scanDepth, enabledTypes, excluded, groups, history]);
 
   // Dark mode toggling on <html>
   useEffect(() => {
@@ -194,6 +248,7 @@ function PickleApp() {
   const confirmDelete = () => {
     const removed = selectedFiles;
     const removedBytes = reclaimableSelected;
+    const prevGroups = groups; // snapshot for true undo
     // Remove from groups
     setGroups((prev) =>
       prev
@@ -215,9 +270,11 @@ function PickleApp() {
       action: {
         label: "Undo",
         onClick: () => {
-          setGroups(seedGroups); // simple restore of seed set
+          setGroups(prevGroups); // restore exactly what was removed
           setHistory((h) => h.filter((x) => x.id !== entry.id));
-          toast("Restored", { description: "Your files are back where they were." });
+          toast("Restored", {
+            description: `${removed.length} file${removed.length === 1 ? "" : "s"} back in place.`,
+          });
         },
       },
       duration: 6000,
@@ -227,7 +284,16 @@ function PickleApp() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {view === "onboarding" ? (
-        <Onboarding onDone={() => setView("dashboard")} />
+        <Onboarding
+          onDone={() => {
+            try {
+              localStorage.setItem("pickle-polish:onboarded", "1");
+            } catch {
+              // ignore
+            }
+            setView("dashboard");
+          }}
+        />
       ) : (
         <div className="mx-auto flex min-h-screen max-w-7xl">
           {/* Desktop sidebar */}
@@ -534,7 +600,7 @@ function Dashboard({
                 Storage used
               </div>
               <div className="mt-1 text-3xl font-bold">
-                {formatBytes(USED_STORAGE)}{" "}
+                <CountUpBytes value={USED_STORAGE} />{" "}
                 <span className="text-base font-medium text-muted-foreground">
                   / {formatBytes(TOTAL_STORAGE)}
                 </span>
@@ -544,7 +610,9 @@ function Dashboard({
               <div className="text-[11px] font-medium uppercase tracking-wide text-primary">
                 Reclaimable
               </div>
-              <div className="text-lg font-bold text-primary">{formatBytes(RECLAIMABLE)}</div>
+              <div className="text-lg font-bold text-primary">
+                <CountUpBytes value={RECLAIMABLE} />
+              </div>
             </div>
           </div>
           <div className="relative mt-5 h-3 overflow-hidden rounded-full bg-muted">
@@ -1257,4 +1325,24 @@ function FileIcon({ type }: { type: FileType }) {
     case "app":
       return <Package className={cls} />;
   }
+}
+
+/* ---------- Count-up animation ---------- */
+
+function CountUpBytes({ value, duration = 1100 }: { value: number; duration?: number }) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      // easeOutCubic
+      const eased = 1 - Math.pow(1 - t, 3);
+      setN(value * eased);
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [value, duration]);
+  return <>{formatBytes(n)}</>;
 }
