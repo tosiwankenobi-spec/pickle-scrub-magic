@@ -318,12 +318,9 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
         toast.error("Undo failed", {
           description: "Could not roll back the last scan action. Try again.",
         });
-        undoStatusTimer.current = window.setTimeout(() => {
-          setScanUndoStatus("idle");
-          undoStatusTimer.current = null;
-        }, 3000) as unknown as number;
         return;
       }
+
 
       setScanUndoStack((stack) => {
         if (stack.length === 0) return stack;
