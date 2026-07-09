@@ -154,10 +154,6 @@ function Dashboard() {
         <ActionTile
           title="Scan"
           description={scanCardDescription}
-
-
-
-
           icon={
             scanUndoStatus === "retrying" || scanUndoStatus === "undoing" ? (
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -173,9 +169,6 @@ function Dashboard() {
               <AnimatedPickleIcon size={44} scanning={scanning} />
             )
           }
-
-
-
           onClick={() => {
             if (scanUndoStatus === "error" || scanUndoStatus === "retry-error") {
               undoScanAction(true);
@@ -185,9 +178,6 @@ function Dashboard() {
               startScan();
             }
           }}
-
-
-
           badge={scanning ? `${scanProgress}%` : undefined}
           accent
           disabled={scanStatus === "cancelling" || scanUndoStatus === "undoing" || scanUndoStatus === "retrying"}
