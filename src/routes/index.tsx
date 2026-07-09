@@ -107,13 +107,20 @@ function Dashboard() {
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <ActionTile
           title="Scan"
-          description="Find duplicates and junk"
-          icon={<BroomIcon className="h-7 w-7" />}
+          description={scanning ? "Scanning your storage…" : "Find duplicates and junk"}
+          icon={
+            scanning ? (
+              <Loader2 className="h-7 w-7 animate-spin" />
+            ) : (
+              <BroomIcon className="h-7 w-7" />
+            )
+          }
           onClick={() => {
             if (!scanning) startScan();
           }}
-          badge={scanning ? "Scanning" : undefined}
+          badge={scanning ? `${scanProgress}%` : undefined}
           accent
+          disabled={scanning}
         />
         <ActionTile
           title="Clean"
