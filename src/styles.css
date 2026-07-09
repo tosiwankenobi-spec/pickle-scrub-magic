@@ -142,3 +142,41 @@
     color: var(--color-foreground);
   }
 }
+
+@keyframes polish-bounce {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-4px) rotate(2deg); }
+}
+
+@keyframes polish-scrub {
+  0%, 100% { transform: translateX(-2px) rotate(-4deg); }
+  50% { transform: translateX(2px) rotate(4deg); }
+}
+
+@keyframes polish-shine {
+  0% { transform: translateX(-100%) rotate(-12deg); opacity: 0; }
+  25% { opacity: 0.6; }
+  50% { transform: translateX(100%) rotate(-12deg); opacity: 0; }
+  100% { transform: translateX(100%) rotate(-12deg); opacity: 0; }
+}
+
+@keyframes polish-pulse {
+  0%, 100% { filter: brightness(1) saturate(1); }
+  50% { filter: brightness(1.08) saturate(1.1); }
+}
+
+.animate-polish-bounce {
+  animation: polish-bounce 1.8s ease-in-out infinite;
+}
+
+.animate-polish-scrub {
+  animation: polish-scrub 0.9s ease-in-out infinite;
+}
+
+.animate-polish-shine {
+  animation: polish-shine 2.4s ease-in-out infinite;
+}
+
+.animate-polish-pulse {
+  animation: polish-pulse 2s ease-in-out infinite;
+}
