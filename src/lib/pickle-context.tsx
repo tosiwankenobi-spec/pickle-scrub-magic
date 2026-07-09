@@ -34,6 +34,9 @@ export type PickleContextType = {
   scanStatus: "idle" | "cancelling" | "cancelled";
   startScan: () => void;
   cancelScan: () => void;
+  scanUndoStack: ScanUndoEntry[];
+  undoScanAction: () => void;
+  clearScanUndoHistory: () => void;
   filteredGroups: DuplicateGroup[];
   selectedFiles: MockFile[];
   reclaimableSelected: number;
@@ -43,6 +46,14 @@ export type PickleContextType = {
   clearSelection: () => void;
   confirmDelete: () => void;
   hydrated: boolean;
+};
+
+export type ScanUndoEntry = {
+  id: string;
+  kind: "cancel" | "resume";
+  at: number;
+  // Snapshot of scan state BEFORE this action, so undo restores it.
+  prev: { scanning: boolean; progress: number };
 };
 
 type PersistedState = {
