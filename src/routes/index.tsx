@@ -248,6 +248,7 @@ function PickleApp() {
   const confirmDelete = () => {
     const removed = selectedFiles;
     const removedBytes = reclaimableSelected;
+    const prevGroups = groups; // snapshot for true undo
     // Remove from groups
     setGroups((prev) =>
       prev
@@ -269,9 +270,11 @@ function PickleApp() {
       action: {
         label: "Undo",
         onClick: () => {
-          setGroups(seedGroups); // simple restore of seed set
+          setGroups(prevGroups); // restore exactly what was removed
           setHistory((h) => h.filter((x) => x.id !== entry.id));
-          toast("Restored", { description: "Your files are back where they were." });
+          toast("Restored", {
+            description: `${removed.length} file${removed.length === 1 ? "" : "s"} back in place.`,
+          });
         },
       },
       duration: 6000,
@@ -281,7 +284,16 @@ function PickleApp() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {view === "onboarding" ? (
-        <Onboarding onDone={() => setView("dashboard")} />
+        <Onboarding
+          onDone={() => {
+            try {
+              localStorage.setItem("pickle-polish:onboarded", "1");
+            } catch {
+              // ignore
+            }
+            setView("dashboard");
+          }}
+        />
       ) : (
         <div className="mx-auto flex min-h-screen max-w-7xl">
           {/* Desktop sidebar */}
