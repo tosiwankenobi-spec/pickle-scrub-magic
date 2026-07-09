@@ -340,6 +340,11 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
       });
 
       setScanUndoStatus("success");
+      if (actuallyRetrying) {
+        toast.success("Retry succeeded", {
+          description: "The last scan action was successfully undone.",
+        });
+      }
       // Briefly flash the success confirmation, then return to the real
       // scan card state so the Retry action is re-enabled and the card
       // reflects whatever the scan is actually doing now.
