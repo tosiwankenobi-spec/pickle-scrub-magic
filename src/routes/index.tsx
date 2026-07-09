@@ -146,7 +146,7 @@ function Dashboard() {
               <div className="mt-1 text-3xl font-bold">
                 <CountUpBytes value={USED_STORAGE} />{" "}
                 <span className="text-base font-medium text-muted-foreground">
-                  / {TOTAL_STORAGE.toLocaleString()} bytes
+                  / {formatBytes(TOTAL_STORAGE)}
                 </span>
               </div>
             </div>
@@ -170,14 +170,14 @@ function Dashboard() {
             />
           </div>
           <div className="mt-3 flex flex-wrap gap-4 text-xs text-muted-foreground">
-            <LegendDot color="bg-primary" label={`Used ${USED_STORAGE.toLocaleString()} bytes`} />
+            <LegendDot color="bg-primary" label={`Used ${formatBytes(USED_STORAGE)}`} />
             <LegendDot
               color="bg-yellow-400"
-              label={`Reclaimable ${RECLAIMABLE.toLocaleString()} bytes`}
+              label={`Reclaimable ${formatBytes(RECLAIMABLE)}`}
             />
             <LegendDot
               color="bg-muted-foreground/40"
-              label={`Free ${(TOTAL_STORAGE - USED_STORAGE).toLocaleString()} bytes`}
+              label={`Free ${formatBytes(TOTAL_STORAGE - USED_STORAGE)}`}
             />
           </div>
         </CardContent>
