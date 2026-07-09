@@ -76,9 +76,25 @@ function HomePage() {
 }
 
 function Dashboard() {
-  const { startScan, cancelScan, scanning, scanProgress, scanStatus, duplicateCount } = usePickle();
+  const {
+    startScan,
+    cancelScan,
+    scanning,
+    scanProgress,
+    scanStatus,
+    duplicateCount,
+    scanUndoStack,
+    undoScanAction,
+    clearScanUndoHistory,
+  } = usePickle();
   const usedPct = (USED_STORAGE / TOTAL_STORAGE) * 100;
   const reclaimPct = (RECLAIMABLE / TOTAL_STORAGE) * 100;
+  const lastUndo = scanUndoStack[scanUndoStack.length - 1];
+  const undoLabel = lastUndo
+    ? lastUndo.kind === "cancel"
+      ? `Resume from ${lastUndo.prev.progress}%`
+      : "Stop scan"
+    : "";
 
   return (
     <div className="space-y-6">
