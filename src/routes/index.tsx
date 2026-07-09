@@ -551,6 +551,7 @@ function Dashboard({
   scanProgress,
   goDuplicates,
   goCleanup,
+  goHistory,
   duplicateCount,
 }: {
   onScan: () => void;
@@ -558,6 +559,7 @@ function Dashboard({
   scanProgress: number;
   goDuplicates: () => void;
   goCleanup: () => void;
+  goHistory: () => void;
   duplicateCount: number;
 }) {
   const usedPct = (USED_STORAGE / TOTAL_STORAGE) * 100;
@@ -568,13 +570,9 @@ function Dashboard({
         <div>
           <h1 className="text-2xl font-bold md:text-3xl">Good afternoon 🥒</h1>
           <p className="text-sm text-muted-foreground">
-            Here's what your phone is holding onto.
+            {formatBytes(USED_STORAGE)} used · {formatBytes(RECLAIMABLE)} reclaimable
           </p>
         </div>
-        <Button onClick={onScan} disabled={scanning} className="gap-2">
-          {scanning ? <Loader2 className="h-4 w-4 animate-spin" /> : <BroomIcon className="h-4 w-4" />}
-          {scanning ? "Scrubbing…" : "Start scan"}
-        </Button>
       </div>
 
       {scanning && (
@@ -591,6 +589,37 @@ function Dashboard({
           </CardContent>
         </Card>
       )}
+
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <ActionTile
+          title="Scan"
+          description="Find duplicates and junk"
+          icon={<BroomIcon className="h-7 w-7" />}
+          onClick={onScan}
+          scanning={scanning}
+          accent
+        />
+        <ActionTile
+          title="Clean"
+          description="Clear caches & stale files"
+          icon={<Sparkles className="h-7 w-7" />}
+          onClick={goCleanup}
+          badge="5 categories"
+        />
+        <ActionTile
+          title="Duplicates"
+          description="Review matching files"
+          icon={<Copy className="h-7 w-7" />}
+          onClick={goDuplicates}
+          badge={`${duplicateCount} files`}
+        />
+        <ActionTile
+          title="History"
+          description="Past cleanups & undo"
+          icon={<History className="h-7 w-7" />}
+          onClick={goHistory}
+        />
+      </div>
 
       <Card className="overflow-hidden">
         <CardContent className="relative pt-6">
@@ -638,48 +667,59 @@ function Dashboard({
           </div>
         </CardContent>
       </Card>
-
-      <div className="grid gap-4 md:grid-cols-3">
-        <StatCard
-          icon={<Database className="h-5 w-5" />}
-          label="Total"
-          value={formatBytes(TOTAL_STORAGE)}
-          hint="128 GB device"
-        />
-        <StatCard
-          icon={<Package className="h-5 w-5" />}
-          label="Free"
-          value={formatBytes(TOTAL_STORAGE - USED_STORAGE)}
-          hint={`${(100 - usedPct).toFixed(0)}% available`}
-        />
-        <StatCard
-          icon={<Sparkles className="h-5 w-5" />}
-          label="Reclaimable"
-          value={formatBytes(RECLAIMABLE)}
-          hint={`${duplicateCount} duplicate files ready`}
-          accent
-        />
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <ActionCard
-          title="Duplicate Finder"
-          description="Grouped by size + hash. Recommended keepers pre-picked."
-          icon={<Copy className="h-6 w-6" />}
-          cta="Review duplicates"
-          onClick={goDuplicates}
-          badge={`${duplicateCount} files`}
-        />
-        <ActionCard
-          title="Smart Cleanup"
-          description="Caches, screenshots, stale downloads, unused apps."
-          icon={<Wand2 className="h-6 w-6" />}
-          cta="Open categories"
-          onClick={goCleanup}
-          badge="5 categories"
-        />
-      </div>
     </div>
+  );
+}
+
+function ActionTile({
+  title,
+  description,
+  icon,
+  onClick,
+  badge,
+  scanning,
+  accent,
+}: {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  badge?: string;
+  scanning?: boolean;
+  accent?: boolean;
+}) {
+  return (
+    <Card
+      className={`group cursor-pointer transition active:scale-[0.98] ${
+        accent
+          ? "border-primary/40 bg-primary/5 hover:border-primary/60 hover:bg-primary/10"
+          : "hover:border-primary/40 hover:bg-accent/30"
+      }`}
+      onClick={onClick}
+    >
+      <CardContent className="flex flex-col items-start gap-3 p-4 pt-5 md:p-5 md:pt-6">
+        <div
+          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition ${
+            accent
+              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+              : "bg-accent text-accent-foreground"
+          }`}
+        >
+          {scanning ? <Loader2 className="h-7 w-7 animate-spin" /> : icon}
+        </div>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold">{title}</h3>
+            {badge && (
+              <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                {badge}
+              </Badge>
+            )}
+          </div>
+          <p className="mt-1 text-xs leading-snug text-muted-foreground">{description}</p>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
