@@ -173,7 +173,7 @@ function Dashboard() {
 
 
           onClick={() => {
-            if (scanUndoStatus === "error") {
+            if (scanUndoStatus === "error" || scanUndoStatus === "retry-error") {
               undoScanAction(true);
             } else if (scanning) {
               if (confirm("Cancel the scan?")) cancelScan();
@@ -181,6 +181,7 @@ function Dashboard() {
               startScan();
             }
           }}
+
 
 
           badge={scanning ? `${scanProgress}%` : undefined}
