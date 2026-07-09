@@ -9,7 +9,9 @@ import {
   Loader2,
   Undo2,
   XCircle,
+  CheckCircle2,
 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -132,23 +134,28 @@ function Dashboard() {
               ? "Retrying…"
               : scanUndoStatus === "undoing"
                 ? "Undoing…"
-                : scanUndoStatus === "error"
-                  ? "Undo failed — tap to retry"
-                  : scanStatus === "error"
-                    ? "Cancel failed"
-                    : scanStatus === "cancelling"
-                      ? "Cancelling…"
-                      : scanning
-                        ? "Tap to cancel scan"
-                        : scanStatus === "cancelled"
-                          ? "Cancelled"
-                          : "Find duplicates and junk"
+                : scanUndoStatus === "success"
+                  ? "Undo succeeded"
+                  : scanUndoStatus === "error"
+                    ? "Undo failed — tap to retry"
+                    : scanStatus === "error"
+                      ? "Cancel failed"
+                      : scanStatus === "cancelling"
+                        ? "Cancelling…"
+                        : scanning
+                          ? "Tap to cancel scan"
+                          : scanStatus === "cancelled"
+                            ? "Cancelled"
+                            : "Find duplicates and junk"
           }
+
 
 
           icon={
             scanUndoStatus === "retrying" || scanUndoStatus === "undoing" ? (
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            ) : scanUndoStatus === "success" ? (
+              <CheckCircle2 className="h-10 w-10 text-emerald-500" />
             ) : scanUndoStatus === "error" ? (
               <XCircle className="h-10 w-10 text-destructive" />
             ) : scanStatus === "cancelling" ? (
@@ -159,6 +166,7 @@ function Dashboard() {
               <AnimatedPickleIcon size={44} scanning={scanning} />
             )
           }
+
 
           onClick={() => {
             if (scanUndoStatus === "error") {

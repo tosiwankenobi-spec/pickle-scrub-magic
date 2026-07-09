@@ -32,7 +32,7 @@ export type PickleContextType = {
   scanning: boolean;
   scanProgress: number;
   scanStatus: "idle" | "cancelling" | "cancelled" | "error";
-  scanUndoStatus: "idle" | "undoing" | "retrying" | "error";
+  scanUndoStatus: "idle" | "undoing" | "retrying" | "error" | "success";
 
   startScan: () => void;
   cancelScan: () => void;
@@ -96,7 +96,7 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
 
   const [scanStatus, setScanStatus] = useState<"idle" | "cancelling" | "cancelled" | "error">("idle");
   const [scanUndoStack, setScanUndoStack] = useState<ScanUndoEntry[]>([]);
-  const [scanUndoStatus, setScanUndoStatus] = useState<"idle" | "undoing" | "retrying" | "error">("idle");
+  const [scanUndoStatus, setScanUndoStatus] = useState<"idle" | "undoing" | "retrying" | "error" | "success">("idle");
 
   const [hydrated, setHydrated] = useState(false);
   const scanTimer = useRef<number | null>(null);
@@ -342,10 +342,12 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
         return next;
       });
 
+      setScanUndoStatus("success");
       undoStatusTimer.current = window.setTimeout(() => {
         setScanUndoStatus("idle");
         undoStatusTimer.current = null;
-      }, 600) as unknown as number;
+      }, 1200) as unknown as number;
+
     }, 600) as unknown as number;
   };
 
