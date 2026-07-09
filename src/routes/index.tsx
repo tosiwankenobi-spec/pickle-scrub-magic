@@ -82,11 +82,13 @@ function Dashboard() {
     scanning,
     scanProgress,
     scanStatus,
+    scanUndoStatus,
     duplicateCount,
     scanUndoStack,
     undoScanAction,
     clearScanUndoHistory,
   } = usePickle();
+
   const usedPct = (USED_STORAGE / TOTAL_STORAGE) * 100;
   const reclaimPct = (RECLAIMABLE / TOTAL_STORAGE) * 100;
   const lastUndo = scanUndoStack[scanUndoStack.length - 1];
