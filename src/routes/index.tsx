@@ -20,6 +20,7 @@ import { AppShell } from "@/components/app-shell";
 import { usePickle } from "@/lib/pickle-context";
 import { TOTAL_STORAGE, USED_STORAGE, RECLAIMABLE, formatBytes } from "@/lib/pickle-data";
 import { CountUpBytes, LegendDot } from "@/components/pickle/shared";
+import { getScanCardDescription } from "@/lib/scan-announcements";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
