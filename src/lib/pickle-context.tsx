@@ -31,7 +31,7 @@ export type PickleContextType = {
   setSelected: React.Dispatch<React.SetStateAction<Set<string>>>;
   scanning: boolean;
   scanProgress: number;
-  scanStatus: "idle" | "cancelling" | "cancelled";
+  scanStatus: "idle" | "cancelling" | "cancelled" | "error";
   startScan: () => void;
   cancelScan: () => void;
   scanUndoStack: ScanUndoEntry[];
@@ -89,7 +89,8 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   const [scanning, setScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
   const scanProgressRef = useRef(scanProgress);
-  const [scanStatus, setScanStatus] = useState<"idle" | "cancelling" | "cancelled">("idle");
+  const cancelAttemptsRef = useRef(0);
+  const [scanStatus, setScanStatus] = useState<"idle" | "cancelling" | "cancelled" | "error">("idle");
   const [scanUndoStack, setScanUndoStack] = useState<ScanUndoEntry[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const scanTimer = useRef<number | null>(null);
@@ -231,14 +232,11 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     setScanning(false);
     setScanProgress(0);
     clearStatusTimer();
-    setScanStatus("cancelling");
+    setScanStatus("cancelled");
     statusTimer.current = window.setTimeout(() => {
-      setScanStatus("cancelled");
-      statusTimer.current = window.setTimeout(() => {
-        setScanStatus("idle");
-        statusTimer.current = null;
-      }, 1400);
-    }, 800) as unknown as number;
+      setScanStatus("idle");
+      statusTimer.current = null;
+    }, 1400) as unknown as number;
   };
 
   const pushUndo = (entry: ScanUndoEntry) => {
@@ -257,22 +255,39 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   };
 
   const cancelScan = () => {
+    cancelAttemptsRef.current += 1;
+    const willFail = cancelAttemptsRef.current % 2 === 1;
     const progressAtCancel = scanProgressRef.current;
-    pushUndo({
-      id: `su${Date.now()}`,
-      kind: "cancel",
-      at: Date.now(),
-      prev: { scanning: true, progress: progressAtCancel },
-    });
-    stopScan();
-    toast("Scan cancelled", {
-      description: "No changes were made.",
-      action: {
-        label: "Undo",
-        onClick: () => undoScanAction(),
-      },
-      duration: 6000,
-    });
+    clearStatusTimer();
+    setScanStatus("cancelling");
+    statusTimer.current = window.setTimeout(() => {
+      if (willFail) {
+        setScanStatus("error");
+        toast.error("Cancel failed", {
+          description: "The scan is still running. Try again.",
+        });
+        statusTimer.current = window.setTimeout(() => {
+          setScanStatus("idle");
+          statusTimer.current = null;
+        }, 3000) as unknown as number;
+      } else {
+        pushUndo({
+          id: `su${Date.now()}`,
+          kind: "cancel",
+          at: Date.now(),
+          prev: { scanning: true, progress: progressAtCancel },
+        });
+        stopScan();
+        toast("Scan cancelled", {
+          description: "No changes were made.",
+          action: {
+            label: "Undo",
+            onClick: () => undoScanAction(),
+          },
+          duration: 6000,
+        });
+      }
+    }, 800) as unknown as number;
   };
 
   const undoScanAction = () => {
