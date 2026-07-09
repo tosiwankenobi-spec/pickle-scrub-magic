@@ -144,6 +144,7 @@ function Dashboard() {
           }}
           badge={scanning ? `${scanProgress}%` : undefined}
           accent
+          disabled={scanStatus === "cancelling"}
         />
         <ActionTile
           title="Clean"
