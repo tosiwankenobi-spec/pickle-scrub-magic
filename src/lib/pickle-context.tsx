@@ -184,7 +184,16 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
 
   const clearSelection = () => setSelected(new Set());
 
+  const clearStatusTimer = () => {
+    if (statusTimer.current) {
+      window.clearTimeout(statusTimer.current);
+      statusTimer.current = null;
+    }
+  };
+
   const startScan = (resumeFrom = 0) => {
+    clearStatusTimer();
+    setScanStatus("idle");
     setScanning(true);
     setScanProgress(resumeFrom);
     if (scanTimer.current) window.clearInterval(scanTimer.current);
@@ -208,6 +217,15 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     if (scanTimer.current) window.clearInterval(scanTimer.current);
     setScanning(false);
     setScanProgress(0);
+    clearStatusTimer();
+    setScanStatus("cancelling");
+    statusTimer.current = window.setTimeout(() => {
+      setScanStatus("cancelled");
+      statusTimer.current = window.setTimeout(() => {
+        setScanStatus("idle");
+        statusTimer.current = null;
+      }, 1400);
+    }, 800) as unknown as number;
     toast("Scan cancelled", {
       description: "No changes were made.",
       action: {
