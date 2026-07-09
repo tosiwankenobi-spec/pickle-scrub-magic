@@ -136,6 +136,7 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     return () => {
       if (scanTimer.current) window.clearInterval(scanTimer.current);
+      if (statusTimer.current) window.clearTimeout(statusTimer.current);
     };
   }, []);
 
