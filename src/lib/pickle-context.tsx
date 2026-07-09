@@ -340,10 +340,13 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
       });
 
       setScanUndoStatus("success");
+      // Briefly flash the success confirmation, then return to the real
+      // scan card state so the Retry action is re-enabled and the card
+      // reflects whatever the scan is actually doing now.
       undoStatusTimer.current = window.setTimeout(() => {
         setScanUndoStatus("idle");
         undoStatusTimer.current = null;
-      }, 1200) as unknown as number;
+      }, 800) as unknown as number;
     }, 600) as unknown as number;
   };
 
