@@ -109,8 +109,9 @@ function Dashboard() {
           title="Scan"
           description="Find duplicates and junk"
           icon={<BroomIcon className="h-7 w-7" />}
-          to="/"
-          onClick={startScan}
+          onClick={() => {
+            if (!scanning) startScan();
+          }}
           badge={scanning ? "Scanning" : undefined}
           accent
         />
