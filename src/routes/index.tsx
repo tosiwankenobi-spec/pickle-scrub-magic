@@ -157,12 +157,15 @@ function Dashboard() {
             )
           }
           onClick={() => {
-            if (scanning) {
+            if (scanUndoStatus === "error") {
+              undoScanAction();
+            } else if (scanning) {
               if (confirm("Cancel the scan?")) cancelScan();
             } else {
               startScan();
             }
           }}
+
           badge={scanning ? `${scanProgress}%` : undefined}
           accent
           disabled={scanStatus === "cancelling" || scanUndoStatus === "undoing"}
