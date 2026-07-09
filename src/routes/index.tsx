@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Sparkles,
@@ -84,6 +84,29 @@ function Dashboard() {
     undoScanAction,
     clearScanUndoHistory,
   } = usePickle();
+
+  const scanCardRef = useRef<HTMLButtonElement>(null);
+  const retryButtonRef = useRef<HTMLButtonElement>(null);
+  const undoTriggerRef = useRef<"scan-card" | "retry-button" | null>(null);
+
+  // Return focus to the control that started the undo/retry once the
+  // operation completes or fails, so keyboard users are not left stranded.
+  useEffect(() => {
+    if (
+      scanUndoStatus === "success" ||
+      scanUndoStatus === "error" ||
+      scanUndoStatus === "retry-error"
+    ) {
+      window.setTimeout(() => {
+        if (undoTriggerRef.current === "retry-button" && retryButtonRef.current) {
+          retryButtonRef.current.focus();
+        } else if (scanCardRef.current) {
+          scanCardRef.current.focus();
+        }
+        undoTriggerRef.current = null;
+      }, 0);
+    }
+  }, [scanUndoStatus]);
 
   const usedPct = (USED_STORAGE / TOTAL_STORAGE) * 100;
   const reclaimPct = (RECLAIMABLE / TOTAL_STORAGE) * 100;
@@ -211,9 +234,11 @@ function Dashboard() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:grid-rows-2">
         {/* Quick Scan — large, accent */}
         <button
+          ref={scanCardRef}
           type="button"
           onClick={() => {
             if (scanUndoStatus === "error" || scanUndoStatus === "retry-error") {
+              undoTriggerRef.current = "scan-card";
               undoScanAction(true);
             } else if (scanning) {
               if (confirm("Cancel the scan?")) cancelScan();
@@ -349,11 +374,15 @@ function Dashboard() {
             </div>
             <div className="flex items-center gap-2">
               <Button
+                ref={retryButtonRef}
                 size="sm"
                 variant="outline"
                 className="h-7 gap-1 px-2 text-xs"
                 disabled={retryButtonDisabled}
-                onClick={() => undoScanAction()}
+                onClick={() => {
+                  undoTriggerRef.current = "retry-button";
+                  undoScanAction();
+                }}
               >
                 <Undo2 className="h-3.5 w-3.5" />
                 {retryButtonDisabled ? "Retrying…" : `Undo · ${undoLabel}`}
