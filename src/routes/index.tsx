@@ -352,10 +352,11 @@ function Dashboard() {
                 size="sm"
                 variant="outline"
                 className="h-7 gap-1 px-2 text-xs"
+                disabled={retryButtonDisabled}
                 onClick={() => undoScanAction()}
               >
                 <Undo2 className="h-3.5 w-3.5" />
-                Undo · {undoLabel}
+                {retryButtonDisabled ? "Retrying…" : `Undo · ${undoLabel}`}
               </Button>
               <Button
                 size="sm"
