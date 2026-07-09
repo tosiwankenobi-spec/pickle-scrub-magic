@@ -59,7 +59,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {/* Mobile header */}
         <header className="flex items-center justify-between border-b border-border bg-background/70 p-4 backdrop-blur md:hidden">
           <BrandMark compact />
-          <Button size="icon" variant="ghost" onClick={() => setDarkMode((v) => !v)}>
+          <Button size="icon" variant="ghost" onClick={() => setDarkMode(!darkMode)}>
             {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
         </header>
