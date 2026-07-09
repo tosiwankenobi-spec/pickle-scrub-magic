@@ -167,6 +167,56 @@ function Dashboard() {
         />
       </div>
 
+      {scanUndoStack.length > 0 && (
+        <Card className="border-dashed">
+          <CardContent className="flex flex-wrap items-center justify-between gap-3 py-3">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Undo2 className="h-3.5 w-3.5" />
+              <span>
+                Scan history · {scanUndoStack.length} step
+                {scanUndoStack.length === 1 ? "" : "s"}
+              </span>
+              <div className="ml-1 hidden gap-1 sm:flex">
+                {scanUndoStack.slice(-5).map((e) => (
+                  <span
+                    key={e.id}
+                    className={`h-1.5 w-4 rounded-full ${
+                      e.kind === "cancel" ? "bg-destructive/60" : "bg-primary/60"
+                    }`}
+                    title={
+                      e.kind === "cancel"
+                        ? `Cancelled at ${e.prev.progress}%`
+                        : "Started scan"
+                    }
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-7 gap-1 px-2 text-xs"
+                onClick={undoScanAction}
+              >
+                <Undo2 className="h-3.5 w-3.5" />
+                Undo · {undoLabel}
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 px-2 text-xs text-muted-foreground"
+                onClick={clearScanUndoHistory}
+              >
+                Clear
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+
+
       <Card className="overflow-hidden">
         <CardContent className="relative pt-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
