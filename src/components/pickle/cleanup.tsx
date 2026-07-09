@@ -25,9 +25,9 @@ export function SmartCleanup() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold md:text-3xl">Smart Cleanup</h1>
+        <h1 className="text-2xl font-bold md:text-3xl font-display">Smart Cleanup</h1>
         <p className="text-sm text-muted-foreground">
-          Pickle-picked categories, safe defaults.
+          Select categories to reclaim space safely.
         </p>
       </div>
       <div className="grid gap-3 md:grid-cols-2">
@@ -47,7 +47,7 @@ export function SmartCleanup() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className="font-semibold">{c.name}</h3>
+                    <h3 className="font-semibold font-display">{c.name}</h3>
                     <Checkbox checked={active} onCheckedChange={() => toggle(c.id)} />
                   </div>
                   <p className="mt-1 text-sm text-muted-foreground">{c.description}</p>
@@ -67,7 +67,7 @@ export function SmartCleanup() {
             <div className="text-xs uppercase tracking-wide text-muted-foreground">
               Selected categories
             </div>
-            <div className="text-2xl font-bold text-primary">{formatBytes(total)}</div>
+            <div className="text-2xl font-bold text-primary font-display">{formatBytes(total)}</div>
           </div>
           <Button
             className="gap-2"
@@ -79,7 +79,7 @@ export function SmartCleanup() {
             }
           >
             <BroomIcon className="h-4 w-4" />
-            Scrub selected
+            Clean selected
           </Button>
         </CardContent>
       </Card>
