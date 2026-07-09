@@ -3,7 +3,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Sparkles,
   Copy,
-  Wind as BroomIcon,
   History,
   Lock,
   ShieldCheck,
@@ -14,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { AppShell } from "@/components/app-shell";
+import { AnimatedPickleIcon } from "@/components/animated-pickle-icon";
 import { usePickle } from "@/lib/pickle-context";
 import {
   TOTAL_STORAGE,
@@ -108,13 +108,7 @@ function Dashboard() {
         <ActionTile
           title="Scan"
           description={scanning ? "Scanning your storage…" : "Find duplicates and junk"}
-          icon={
-            scanning ? (
-              <Loader2 className="h-7 w-7 animate-spin" />
-            ) : (
-              <BroomIcon className="h-7 w-7" />
-            )
-          }
+          icon={<AnimatedPickleIcon size={44} scanning={scanning} />}
           onClick={() => {
             if (!scanning) startScan();
           }}
