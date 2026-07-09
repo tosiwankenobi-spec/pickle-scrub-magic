@@ -1,4 +1,4 @@
-import picklePolish from "@/assets/pickle-polish.png";
+import picklePolish from "@/assets/pickle-polish.png.asset.json";
 
 export function AnimatedPickleIcon({
   size = 48,
