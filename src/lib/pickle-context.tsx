@@ -255,6 +255,8 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   };
 
   const cancelScan = () => {
+    if (scanStatus === "cancelling") return;
+
     cancelAttemptsRef.current += 1;
     const willFail = cancelAttemptsRef.current % 2 === 1;
     const progressAtCancel = scanProgressRef.current;
