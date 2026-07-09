@@ -236,7 +236,7 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     statusTimer.current = window.setTimeout(() => {
       setScanStatus("idle");
       statusTimer.current = null;
-    }, 1400) as unknown as number;
+    }, 600) as unknown as number;
   };
 
   const pushUndo = (entry: ScanUndoEntry) => {
