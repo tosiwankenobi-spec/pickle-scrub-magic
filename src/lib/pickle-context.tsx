@@ -194,6 +194,15 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     }, 90) as unknown as number;
   };
 
+  const cancelScan = () => {
+    if (scanTimer.current) window.clearInterval(scanTimer.current);
+    setScanning(false);
+    setScanProgress(0);
+    toast("Scan cancelled", {
+      description: "No changes were made.",
+    });
+  };
+
   const confirmDelete = () => {
     const removed = selectedFiles;
     const removedBytes = reclaimableSelected;
