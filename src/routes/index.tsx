@@ -84,7 +84,7 @@ function Dashboard() {
         <div>
           <h1 className="text-2xl font-bold md:text-3xl">Good afternoon 🥒</h1>
           <p className="text-sm text-muted-foreground">
-            {USED_STORAGE.toLocaleString()} bytes used · {RECLAIMABLE.toLocaleString()} bytes reclaimable
+            {formatBytes(USED_STORAGE)} used · {formatBytes(RECLAIMABLE)} reclaimable
           </p>
         </div>
       </div>
