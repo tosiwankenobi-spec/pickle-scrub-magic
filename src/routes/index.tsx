@@ -110,8 +110,11 @@ function Dashboard() {
           description={scanning ? "Tap to cancel scan" : "Find duplicates and junk"}
           icon={<AnimatedPickleIcon size={44} scanning={scanning} />}
           onClick={() => {
-            if (scanning) cancelScan();
-            else startScan();
+            if (scanning) {
+              if (confirm("Cancel the scan?")) cancelScan();
+            } else {
+              startScan();
+            }
           }}
           badge={scanning ? `${scanProgress}%` : undefined}
           accent
