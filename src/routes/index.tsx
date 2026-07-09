@@ -74,7 +74,7 @@ function HomePage() {
 }
 
 function Dashboard() {
-  const { startScan, scanning, scanProgress, duplicateCount } = usePickle();
+  const { startScan, cancelScan, scanning, scanProgress, duplicateCount } = usePickle();
   const usedPct = (USED_STORAGE / TOTAL_STORAGE) * 100;
   const reclaimPct = (RECLAIMABLE / TOTAL_STORAGE) * 100;
 
@@ -107,14 +107,14 @@ function Dashboard() {
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <ActionTile
           title="Scan"
-          description={scanning ? "Scanning your storage…" : "Find duplicates and junk"}
+          description={scanning ? "Tap to cancel scan" : "Find duplicates and junk"}
           icon={<AnimatedPickleIcon size={44} scanning={scanning} />}
           onClick={() => {
-            if (!scanning) startScan();
+            if (scanning) cancelScan();
+            else startScan();
           }}
           badge={scanning ? `${scanProgress}%` : undefined}
           accent
-          disabled={scanning}
         />
         <ActionTile
           title="Clean"
