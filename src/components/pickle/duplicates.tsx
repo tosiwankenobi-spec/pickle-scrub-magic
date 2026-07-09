@@ -54,7 +54,7 @@ export function Duplicates() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={onScan} disabled={scanning} className="gap-2">
+          <Button variant="outline" onClick={startScan} disabled={scanning} className="gap-2">
             {scanning ? <Loader2 className="h-4 w-4 animate-spin" /> : <BroomIcon className="h-4 w-4" />}
             {scanning ? "Scrubbing…" : "Rescan"}
           </Button>
