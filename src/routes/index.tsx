@@ -93,6 +93,18 @@ const NAV: { id: ViewId; label: string; icon: React.ReactNode }[] = [
   { id: "roadmap", label: "Roadmap", icon: <Smartphone className="h-5 w-5" /> },
 ];
 
+const STORAGE_KEY = "pickle-polish:state:v1";
+
+type PersistedState = {
+  darkMode: boolean;
+  minDupSize: number;
+  scanDepth: "quick" | "standard" | "deep";
+  enabledTypes: Record<FileType, boolean>;
+  excluded: string[];
+  groups: DuplicateGroup[];
+  history: HistoryEntry[];
+};
+
 function PickleApp() {
   const [view, setView] = useState<ViewId>("onboarding");
   const [darkMode, setDarkMode] = useState(false);
@@ -114,7 +126,49 @@ function PickleApp() {
   const [history, setHistory] = useState<HistoryEntry[]>(initialHistory);
   const [scanning, setScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
+  const [hydrated, setHydrated] = useState(false);
   const scanTimer = useRef<number | null>(null);
+
+  // Hydrate from localStorage after mount (SSR-safe)
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const s = JSON.parse(raw) as Partial<PersistedState>;
+        if (typeof s.darkMode === "boolean") setDarkMode(s.darkMode);
+        if (typeof s.minDupSize === "number") setMinDupSize(s.minDupSize);
+        if (s.scanDepth) setScanDepth(s.scanDepth);
+        if (s.enabledTypes) setEnabledTypes(s.enabledTypes);
+        if (Array.isArray(s.excluded)) setExcluded(s.excluded);
+        if (Array.isArray(s.groups)) setGroups(s.groups);
+        if (Array.isArray(s.history)) setHistory(s.history);
+      }
+      const onboarded = localStorage.getItem("pickle-polish:onboarded");
+      if (onboarded === "1") setView("dashboard");
+    } catch {
+      // ignore
+    }
+    setHydrated(true);
+  }, []);
+
+  // Persist on change
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      const payload: PersistedState = {
+        darkMode,
+        minDupSize,
+        scanDepth,
+        enabledTypes,
+        excluded,
+        groups,
+        history,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch {
+      // ignore quota errors
+    }
+  }, [hydrated, darkMode, minDupSize, scanDepth, enabledTypes, excluded, groups, history]);
 
   // Dark mode toggling on <html>
   useEffect(() => {
