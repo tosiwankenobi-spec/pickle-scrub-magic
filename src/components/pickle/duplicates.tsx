@@ -96,7 +96,7 @@ export function Duplicates() {
                       isSelected
                         ? "border-primary bg-primary/5"
                         : f.recommended
-                          ? "border-emerald-200 bg-emerald-50/50 dark:bg-emerald-950/20"
+                          ? "border-primary/30 bg-primary/5"
                           : "border-border hover:bg-muted/50"
                     }`}
                   >
@@ -109,7 +109,7 @@ export function Duplicates() {
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="truncate font-medium">{f.name}</span>
                         {f.recommended && (
-                          <Badge className="gap-1 bg-emerald-600 text-white hover:bg-emerald-600">
+                          <Badge className="gap-1 bg-primary text-primary-foreground hover:bg-primary">
                             <Check className="h-3 w-3" /> Recommended keep
                           </Badge>
                         )}
