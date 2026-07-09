@@ -229,7 +229,8 @@ function Dashboard() {
                 size="sm"
                 variant="outline"
                 className="h-7 gap-1 px-2 text-xs"
-                onClick={undoScanAction}
+                onClick={() => undoScanAction()}
+
               >
                 <Undo2 className="h-3.5 w-3.5" />
                 Undo · {undoLabel}
