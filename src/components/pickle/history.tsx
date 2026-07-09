@@ -33,7 +33,7 @@ export function HistoryView({ entries }: { entries: HistoryEntry[] }) {
           ))}
           {entries.length === 0 && (
             <div className="p-8 text-center text-sm text-muted-foreground">
-              No cleanups yet. Start scrubbing to see your history.
+              No cleanups yet. Start cleaning to see your history.
             </div>
           )}
         </CardContent>
