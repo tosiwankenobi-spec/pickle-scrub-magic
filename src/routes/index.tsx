@@ -3,7 +3,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Sparkles,
   Copy,
-  Wind as BroomIcon,
   History,
   Lock,
   ShieldCheck,
@@ -14,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { AppShell } from "@/components/app-shell";
+import { AnimatedPickleIcon } from "@/components/animated-pickle-icon";
 import { usePickle } from "@/lib/pickle-context";
 import {
   TOTAL_STORAGE,
