@@ -134,7 +134,13 @@ function Dashboard() {
                   ? "Cancelled"
                   : "Find duplicates and junk"
           }
-          icon={<AnimatedPickleIcon size={44} scanning={scanning} />}
+          icon={
+            scanStatus === "cancelling" ? (
+              <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            ) : (
+              <AnimatedPickleIcon size={44} scanning={scanning} />
+            )
+          }
           onClick={() => {
             if (scanning) {
               if (confirm("Cancel the scan?")) cancelScan();
