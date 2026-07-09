@@ -374,11 +374,15 @@ function Dashboard() {
             </div>
             <div className="flex items-center gap-2">
               <Button
+                ref={retryButtonRef}
                 size="sm"
                 variant="outline"
                 className="h-7 gap-1 px-2 text-xs"
                 disabled={retryButtonDisabled}
-                onClick={() => undoScanAction()}
+                onClick={() => {
+                  undoTriggerRef.current = "retry-button";
+                  undoScanAction();
+                }}
               >
                 <Undo2 className="h-3.5 w-3.5" />
                 {retryButtonDisabled ? "Retrying…" : `Undo · ${undoLabel}`}
