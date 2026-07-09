@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePickle } from "@/lib/pickle-context";
-import logoAsset from "@/assets/pickle-polish-logo.png.asset.json";
 
 const NAV = [
   { to: "/", label: "Dashboard", icon: Home },
@@ -26,39 +25,52 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const { darkMode, setDarkMode } = usePickle();
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-7xl">
-      {/* Desktop sidebar */}
-      <aside className="hidden w-64 shrink-0 border-r border-border bg-sidebar p-4 md:flex md:flex-col">
-        <BrandMark />
-        <nav className="mt-6 flex flex-col gap-1">
-          {NAV.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              activeProps={{ className: "bg-primary text-primary-foreground shadow-sm" }}
-              inactiveProps={{ className: "text-sidebar-foreground hover:bg-sidebar-accent" }}
-              activeOptions={{ exact: item.to === "/" }}
-              className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition"
-            >
-              <item.icon className="h-5 w-5" />
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="mt-auto rounded-2xl bg-accent/60 p-4 text-xs text-accent-foreground">
-          <div className="flex items-center gap-2 font-semibold">
-            Prototype
-          </div>
-          <p className="mt-1 text-muted-foreground">
-            Web demo of Pickle Polish. Native cleanup needs Android APIs — see Roadmap.
-          </p>
+    <div className="mx-auto flex min-h-screen max-w-7xl bg-background">
+      {/* Desktop sidebar — icon rail */}
+      <aside className="hidden w-20 shrink-0 border-r border-border bg-sidebar px-3 py-6 md:flex md:flex-col md:items-center">
+        <div className="flex flex-col items-center gap-8">
+          <BrandMark />
+          <nav className="flex flex-col gap-3">
+            {NAV.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                title={item.label}
+                activeProps={{
+                  className:
+                    "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm",
+                }}
+                inactiveProps={{
+                  className:
+                    "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                }}
+                activeOptions={{ exact: item.to === "/" }}
+                className="flex h-11 w-11 items-center justify-center rounded-xl transition"
+              >
+                <item.icon className="h-5 w-5" />
+                <span className="sr-only">{item.label}</span>
+              </Link>
+            ))}
+          </nav>
+        </div>
+        <div className="mt-auto flex flex-col items-center gap-3">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => setDarkMode(!darkMode)}
+            className="h-10 w-10 text-sidebar-foreground"
+            aria-label="Toggle dark mode"
+          >
+            {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </Button>
+          <div className="h-8 w-8 rounded-full border border-sidebar-border bg-sidebar-accent" aria-label="Profile" />
         </div>
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col pb-24 md:pb-0">
         {/* Mobile header */}
         <header className="flex items-center justify-between border-b border-border bg-background/70 p-4 backdrop-blur md:hidden">
-          <BrandMark compact />
+          <BrandMark />
           <Button size="icon" variant="ghost" onClick={() => setDarkMode(!darkMode)}>
             {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
@@ -87,24 +99,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-function BrandMark({ compact = false }: { compact?: boolean }) {
+function BrandMark() {
   return (
-    <div className="flex items-center gap-2.5">
-      <img
-        src={logoAsset.url}
-        alt="Pickle Polish logo"
-        className="h-11 w-11 rounded-2xl object-cover shadow-md shadow-primary/20 ring-1 ring-border"
-      />
-      {!compact ? (
-        <div>
-          <div className="text-base font-bold leading-tight tracking-tight">Pickle Polish</div>
-          <div className="text-[11px] text-muted-foreground">
-            Pickle-clean your phone storage
-          </div>
-        </div>
-      ) : (
-        <div className="text-base font-bold tracking-tight">Pickle Polish</div>
-      )}
+    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="4" y="4" width="16" height="16" rx="3" />
+        <path d="M9 12h6" />
+      </svg>
     </div>
   );
 }
