@@ -162,13 +162,14 @@ function Dashboard() {
 
           onClick={() => {
             if (scanUndoStatus === "error") {
-              undoScanAction();
+              undoScanAction(true);
             } else if (scanning) {
               if (confirm("Cancel the scan?")) cancelScan();
             } else {
               startScan();
             }
           }}
+
 
           badge={scanning ? `${scanProgress}%` : undefined}
           accent
