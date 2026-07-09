@@ -94,6 +94,8 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   const cancelAttemptsRef = useRef(0);
   const [scanStatus, setScanStatus] = useState<"idle" | "cancelling" | "cancelled" | "error">("idle");
   const [scanUndoStack, setScanUndoStack] = useState<ScanUndoEntry[]>([]);
+  const [scanUndoStatus, setScanUndoStatus] = useState<"idle" | "undoing">("idle");
+
   const [hydrated, setHydrated] = useState(false);
   const scanTimer = useRef<number | null>(null);
   const statusTimer = useRef<number | null>(null);
