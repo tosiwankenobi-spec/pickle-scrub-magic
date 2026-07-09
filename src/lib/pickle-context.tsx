@@ -302,10 +302,11 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     }, 800) as unknown as number;
   };
 
-  const undoScanAction = () => {
-    if (scanUndoStatus === "undoing") return;
-    setScanUndoStatus("undoing");
+  const undoScanAction = (isRetry = false) => {
+    if (scanUndoStatus === "undoing" || scanUndoStatus === "retrying") return;
+    setScanUndoStatus(isRetry ? "retrying" : "undoing");
     if (undoStatusTimer.current) window.clearTimeout(undoStatusTimer.current);
+
 
 
     undoAttemptsRef.current += 1;
