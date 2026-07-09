@@ -167,7 +167,7 @@ function Dashboard() {
           <div className="relative h-4 overflow-hidden rounded-full bg-muted">
             <div
               className="absolute left-0 top-0 h-full bg-primary transition-all duration-500"
-              style={{ width: `${usedPct - reclaimPct}%` }}
+              style={{ width: `${usedPct}%` }}
             />
             <div
               className="absolute top-0 h-full bg-ocean-500 transition-all duration-500"
@@ -180,7 +180,7 @@ function Dashboard() {
           </div>
 
           <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
-            <LegendDot color="bg-primary" label={`Used ${formatBytes(USED_STORAGE - RECLAIMABLE)}`} />
+            <LegendDot color="bg-primary" label={`Used ${formatBytes(USED_STORAGE)}`} />
             <LegendDot color="bg-ocean-500" label={`Reclaimable ${formatBytes(RECLAIMABLE)}`} />
             <LegendDot color="bg-muted-foreground/40" label={`Free ${formatBytes(TOTAL_STORAGE - USED_STORAGE)}`} />
           </div>
