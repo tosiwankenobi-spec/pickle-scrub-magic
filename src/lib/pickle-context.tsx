@@ -31,6 +31,7 @@ export type PickleContextType = {
   setSelected: React.Dispatch<React.SetStateAction<Set<string>>>;
   scanning: boolean;
   scanProgress: number;
+  scanStatus: "idle" | "cancelling" | "cancelled";
   startScan: () => void;
   cancelScan: () => void;
   filteredGroups: DuplicateGroup[];
