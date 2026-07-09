@@ -134,18 +134,21 @@ function Dashboard() {
               ? "Retrying…"
               : scanUndoStatus === "undoing"
                 ? "Undoing…"
-                : scanUndoStatus === "error"
-                  ? "Undo failed — tap to retry"
-                  : scanStatus === "error"
-                    ? "Cancel failed"
-                    : scanStatus === "cancelling"
-                      ? "Cancelling…"
-                      : scanning
-                        ? "Tap to cancel scan"
-                        : scanStatus === "cancelled"
-                          ? "Cancelled"
-                          : "Find duplicates and junk"
+                : scanUndoStatus === "success"
+                  ? "Undo succeeded"
+                  : scanUndoStatus === "error"
+                    ? "Undo failed — tap to retry"
+                    : scanStatus === "error"
+                      ? "Cancel failed"
+                      : scanStatus === "cancelling"
+                        ? "Cancelling…"
+                        : scanning
+                          ? "Tap to cancel scan"
+                          : scanStatus === "cancelled"
+                            ? "Cancelled"
+                            : "Find duplicates and junk"
           }
+
 
 
           icon={
