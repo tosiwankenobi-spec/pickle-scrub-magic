@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as HistoryRouteImport } from './routes/history'
 import { Route as DuplicatesRouteImport } from './routes/duplicates'
 import { Route as CleanRouteImport } from './routes/clean'
 import { Route as IndexRouteImport } from './routes/index'
 
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DuplicatesRoute = DuplicatesRouteImport.update({
   id: '/duplicates',
   path: '/duplicates',
@@ -33,34 +39,45 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/clean': typeof CleanRoute
   '/duplicates': typeof DuplicatesRoute
+  '/history': typeof HistoryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/clean': typeof CleanRoute
   '/duplicates': typeof DuplicatesRoute
+  '/history': typeof HistoryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/clean': typeof CleanRoute
   '/duplicates': typeof DuplicatesRoute
+  '/history': typeof HistoryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/clean' | '/duplicates'
+  fullPaths: '/' | '/clean' | '/duplicates' | '/history'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/clean' | '/duplicates'
-  id: '__root__' | '/' | '/clean' | '/duplicates'
+  to: '/' | '/clean' | '/duplicates' | '/history'
+  id: '__root__' | '/' | '/clean' | '/duplicates' | '/history'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CleanRoute: typeof CleanRoute
   DuplicatesRoute: typeof DuplicatesRoute
+  HistoryRoute: typeof HistoryRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/duplicates': {
       id: '/duplicates'
       path: '/duplicates'
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CleanRoute: CleanRoute,
   DuplicatesRoute: DuplicatesRoute,
+  HistoryRoute: HistoryRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
