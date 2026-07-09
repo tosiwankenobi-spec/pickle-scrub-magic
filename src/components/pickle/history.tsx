@@ -7,9 +7,9 @@ export function HistoryView({ entries }: { entries: HistoryEntry[] }) {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold md:text-3xl">Cleanup history</h1>
+        <h1 className="text-2xl font-bold md:text-3xl font-display">Cleanup history</h1>
         <p className="text-sm text-muted-foreground">
-          Every scrub, logged locally. Total reclaimed: {formatBytes(totalReclaimed)}.
+          Logged locally. Total reclaimed: {formatBytes(totalReclaimed)}.
         </p>
       </div>
       <Card>
