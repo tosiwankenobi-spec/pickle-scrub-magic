@@ -126,26 +126,11 @@ function Dashboard() {
   const retryButtonDisabled =
     scanUndoStatus === "undoing" || scanUndoStatus === "retrying";
 
-  const scanCardDescription =
-    scanUndoStatus === "retrying"
-      ? "Retrying…"
-      : scanUndoStatus === "undoing"
-        ? "Undoing…"
-        : scanUndoStatus === "success"
-          ? "Undo succeeded"
-          : scanUndoStatus === "retry-error"
-            ? "Undo failed — tap to retry again"
-            : scanUndoStatus === "error"
-              ? "Undo failed — tap to retry"
-              : scanStatus === "error"
-                ? "Cancel failed"
-                : scanStatus === "cancelling"
-                  ? "Cancelling…"
-                  : scanning
-                    ? "Tap to cancel scan"
-                    : scanStatus === "cancelled"
-                      ? "Cancelled"
-                      : "Find duplicates and junk";
+  const scanCardDescription = getScanCardDescription(
+    scanUndoStatus,
+    scanStatus,
+    scanning,
+  );
 
   return (
     <div className="space-y-6">
