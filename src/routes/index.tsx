@@ -67,6 +67,7 @@ import {
   type HistoryEntry,
   type FileType,
 } from "@/lib/pickle-data";
+import logoAsset from "@/assets/pickle-polish-logo.png.asset.json";
 
 export const Route = createFileRoute("/")({
   component: PickleApp,
