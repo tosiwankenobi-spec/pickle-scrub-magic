@@ -100,8 +100,32 @@ function Dashboard() {
       : "Stop scan"
     : "";
 
+  const scanCardDescription =
+    scanUndoStatus === "retrying"
+      ? "Retrying…"
+      : scanUndoStatus === "undoing"
+        ? "Undoing…"
+        : scanUndoStatus === "success"
+          ? "Undo succeeded"
+          : scanUndoStatus === "retry-error"
+            ? "Undo failed — tap to retry again"
+            : scanUndoStatus === "error"
+              ? "Undo failed — tap to retry"
+              : scanStatus === "error"
+                ? "Cancel failed"
+                : scanStatus === "cancelling"
+                  ? "Cancelling…"
+                  : scanning
+                    ? "Tap to cancel scan"
+                    : scanStatus === "cancelled"
+                      ? "Cancelled"
+                      : "Find duplicates and junk";
+
   return (
     <div className="space-y-6">
+      <span className="sr-only" aria-live="polite" aria-atomic="true">
+        {scanCardDescription}
+      </span>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold md:text-3xl">Good afternoon 🥒</h1>
@@ -129,31 +153,7 @@ function Dashboard() {
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <ActionTile
           title="Scan"
-          description={
-            scanUndoStatus === "retrying"
-              ? "Retrying…"
-              : scanUndoStatus === "undoing"
-                ? "Undoing…"
-                : scanUndoStatus === "success"
-                  ? "Undo succeeded"
-                  : scanUndoStatus === "retry-error"
-                    ? "Undo failed — tap to retry again"
-                    : scanUndoStatus === "error"
-                      ? "Undo failed — tap to retry"
-                      : scanStatus === "error"
-                        ? "Cancel failed"
-                        : scanStatus === "cancelling"
-                          ? "Cancelling…"
-                          : scanning
-                            ? "Tap to cancel scan"
-                            : scanStatus === "cancelled"
-                              ? "Cancelled"
-                              : "Find duplicates and junk"
-          }
-
-
-
-
+          description={scanCardDescription}
           icon={
             scanUndoStatus === "retrying" || scanUndoStatus === "undoing" ? (
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -169,9 +169,6 @@ function Dashboard() {
               <AnimatedPickleIcon size={44} scanning={scanning} />
             )
           }
-
-
-
           onClick={() => {
             if (scanUndoStatus === "error" || scanUndoStatus === "retry-error") {
               undoScanAction(true);
@@ -181,9 +178,6 @@ function Dashboard() {
               startScan();
             }
           }}
-
-
-
           badge={scanning ? `${scanProgress}%` : undefined}
           accent
           disabled={scanStatus === "cancelling" || scanUndoStatus === "undoing" || scanUndoStatus === "retrying"}
