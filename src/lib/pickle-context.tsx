@@ -32,12 +32,12 @@ export type PickleContextType = {
   scanning: boolean;
   scanProgress: number;
   scanStatus: "idle" | "cancelling" | "cancelled" | "error";
-  scanUndoStatus: "idle" | "undoing" | "error";
+  scanUndoStatus: "idle" | "undoing" | "retrying" | "error";
 
   startScan: () => void;
   cancelScan: () => void;
   scanUndoStack: ScanUndoEntry[];
-  undoScanAction: () => void;
+  undoScanAction: (isRetry?: boolean) => void;
   clearScanUndoHistory: () => void;
   filteredGroups: DuplicateGroup[];
   selectedFiles: MockFile[];
@@ -96,7 +96,7 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
 
   const [scanStatus, setScanStatus] = useState<"idle" | "cancelling" | "cancelled" | "error">("idle");
   const [scanUndoStack, setScanUndoStack] = useState<ScanUndoEntry[]>([]);
-  const [scanUndoStatus, setScanUndoStatus] = useState<"idle" | "undoing" | "error">("idle");
+  const [scanUndoStatus, setScanUndoStatus] = useState<"idle" | "undoing" | "retrying" | "error">("idle");
 
   const [hydrated, setHydrated] = useState(false);
   const scanTimer = useRef<number | null>(null);
@@ -302,10 +302,11 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     }, 800) as unknown as number;
   };
 
-  const undoScanAction = () => {
-    if (scanUndoStatus === "undoing") return;
-    setScanUndoStatus("undoing");
+  const undoScanAction = (isRetry = false) => {
+    if (scanUndoStatus === "undoing" || scanUndoStatus === "retrying") return;
+    setScanUndoStatus(isRetry ? "retrying" : "undoing");
     if (undoStatusTimer.current) window.clearTimeout(undoStatusTimer.current);
+
 
 
     undoAttemptsRef.current += 1;

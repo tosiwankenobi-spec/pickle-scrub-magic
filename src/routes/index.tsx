@@ -128,23 +128,26 @@ function Dashboard() {
         <ActionTile
           title="Scan"
           description={
-            scanUndoStatus === "undoing"
-              ? "Undoing…"
-              : scanUndoStatus === "error"
-                ? "Undo failed — tap to retry"
-                : scanStatus === "error"
-                  ? "Cancel failed"
-                  : scanStatus === "cancelling"
-                    ? "Cancelling…"
-                    : scanning
-                      ? "Tap to cancel scan"
-                      : scanStatus === "cancelled"
-                        ? "Cancelled"
-                        : "Find duplicates and junk"
+            scanUndoStatus === "retrying"
+              ? "Retrying…"
+              : scanUndoStatus === "undoing"
+                ? "Undoing…"
+                : scanUndoStatus === "error"
+                  ? "Undo failed — tap to retry"
+                  : scanStatus === "error"
+                    ? "Cancel failed"
+                    : scanStatus === "cancelling"
+                      ? "Cancelling…"
+                      : scanning
+                        ? "Tap to cancel scan"
+                        : scanStatus === "cancelled"
+                          ? "Cancelled"
+                          : "Find duplicates and junk"
           }
 
+
           icon={
-            scanUndoStatus === "undoing" ? (
+            scanUndoStatus === "retrying" || scanUndoStatus === "undoing" ? (
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
             ) : scanUndoStatus === "error" ? (
               <XCircle className="h-10 w-10 text-destructive" />
@@ -156,15 +159,17 @@ function Dashboard() {
               <AnimatedPickleIcon size={44} scanning={scanning} />
             )
           }
+
           onClick={() => {
             if (scanUndoStatus === "error") {
-              undoScanAction();
+              undoScanAction(true);
             } else if (scanning) {
               if (confirm("Cancel the scan?")) cancelScan();
             } else {
               startScan();
             }
           }}
+
 
           badge={scanning ? `${scanProgress}%` : undefined}
           accent
@@ -224,7 +229,8 @@ function Dashboard() {
                 size="sm"
                 variant="outline"
                 className="h-7 gap-1 px-2 text-xs"
-                onClick={undoScanAction}
+                onClick={() => undoScanAction()}
+
               >
                 <Undo2 className="h-3.5 w-3.5" />
                 Undo · {undoLabel}
