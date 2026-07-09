@@ -56,7 +56,7 @@ export function Duplicates() {
         <div className="flex gap-2">
           <Button variant="outline" onClick={startScan} disabled={scanning} className="gap-2">
             {scanning ? <Loader2 className="h-4 w-4 animate-spin" /> : <BroomIcon className="h-4 w-4" />}
-            {scanning ? "Scrubbing…" : "Rescan"}
+            {scanning ? "Scanning…" : "Rescan"}
           </Button>
           <Button onClick={selectAllExceptRecommended} variant="secondary">
             Select all except recommended
