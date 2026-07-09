@@ -303,24 +303,24 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   };
 
   const undoScanAction = (isRetry = false) => {
+    const isFromError = scanUndoStatus === "error" || scanUndoStatus === "retry-error";
+    const actuallyRetrying = isRetry || isFromError;
+
     if (scanUndoStatus === "undoing" || scanUndoStatus === "retrying") return;
-    setScanUndoStatus(isRetry ? "retrying" : "undoing");
+    setScanUndoStatus(actuallyRetrying ? "retrying" : "undoing");
     if (undoStatusTimer.current) window.clearTimeout(undoStatusTimer.current);
-
-
 
     undoAttemptsRef.current += 1;
     const willFail = undoAttemptsRef.current % 2 === 1;
 
     undoStatusTimer.current = window.setTimeout(() => {
       if (willFail) {
-        setScanUndoStatus("error");
-        toast.error("Undo failed", {
+        setScanUndoStatus(actuallyRetrying ? "retry-error" : "error");
+        toast.error(actuallyRetrying ? "Retry failed" : "Undo failed", {
           description: "Could not roll back the last scan action. Try again.",
         });
         return;
       }
-
 
       setScanUndoStack((stack) => {
         if (stack.length === 0) return stack;
@@ -344,9 +344,9 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
         setScanUndoStatus("idle");
         undoStatusTimer.current = null;
       }, 1200) as unknown as number;
-
     }, 600) as unknown as number;
   };
+
 
 
 
