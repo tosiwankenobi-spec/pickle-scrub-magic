@@ -11,8 +11,6 @@ import {
   XCircle,
   CheckCircle2,
   Search,
-  Trash2,
-  Clock,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
