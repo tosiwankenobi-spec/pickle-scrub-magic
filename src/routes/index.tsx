@@ -8,7 +8,7 @@ import {
   ShieldCheck,
   Loader2,
   Undo2,
-
+  XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -126,17 +126,21 @@ function Dashboard() {
         <ActionTile
           title="Scan"
           description={
-            scanning
-              ? "Tap to cancel scan"
+            scanStatus === "error"
+              ? "Cancel failed"
               : scanStatus === "cancelling"
                 ? "Cancelling…"
-                : scanStatus === "cancelled"
-                  ? "Cancelled"
-                  : "Find duplicates and junk"
+                : scanning
+                  ? "Tap to cancel scan"
+                  : scanStatus === "cancelled"
+                    ? "Cancelled"
+                    : "Find duplicates and junk"
           }
           icon={
             scanStatus === "cancelling" ? (
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            ) : scanStatus === "error" ? (
+              <XCircle className="h-10 w-10 text-destructive" />
             ) : (
               <AnimatedPickleIcon size={44} scanning={scanning} />
             )
