@@ -131,7 +131,7 @@ function Dashboard() {
             scanUndoStatus === "undoing"
               ? "Undoing…"
               : scanUndoStatus === "error"
-                ? "Undo failed"
+                ? "Undo failed — tap to retry"
                 : scanStatus === "error"
                   ? "Cancel failed"
                   : scanStatus === "cancelling"
@@ -142,6 +142,7 @@ function Dashboard() {
                         ? "Cancelled"
                         : "Find duplicates and junk"
           }
+
           icon={
             scanUndoStatus === "undoing" ? (
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
