@@ -71,7 +71,7 @@ type PersistedState = {
 const PickleContext = createContext<PickleContextType | null>(null);
 
 export function PickleProvider({ children }: { children: React.ReactNode }) {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const [minDupSize, setMinDupSize] = useState(1); // MB
   const [scanDepth, setScanDepth] = useState<"quick" | "standard" | "deep">("standard");
   const [enabledTypes, setEnabledTypes] = useState<Record<FileType, boolean>>({
@@ -81,10 +81,7 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     document: true,
     app: false,
   });
-  const [excluded, setExcluded] = useState<string[]>([
-    "/Android/data",
-    "/WhatsApp/Backups",
-  ]);
+  const [excluded, setExcluded] = useState<string[]>(["/Android/data", "/WhatsApp/Backups"]);
   const [groups, setGroups] = useState<DuplicateGroup[]>(seedGroups);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [history, setHistory] = useState<HistoryEntry[]>(initialHistory);
@@ -94,15 +91,18 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   const cancelAttemptsRef = useRef(0);
   const undoAttemptsRef = useRef(0);
 
-  const [scanStatus, setScanStatus] = useState<"idle" | "cancelling" | "cancelled" | "error">("idle");
+  const [scanStatus, setScanStatus] = useState<"idle" | "cancelling" | "cancelled" | "error">(
+    "idle",
+  );
   const [scanUndoStack, setScanUndoStack] = useState<ScanUndoEntry[]>([]);
-  const [scanUndoStatus, setScanUndoStatus] = useState<"idle" | "undoing" | "retrying" | "error" | "retry-error" | "success">("idle");
+  const [scanUndoStatus, setScanUndoStatus] = useState<
+    "idle" | "undoing" | "retrying" | "error" | "retry-error" | "success"
+  >("idle");
 
   const [hydrated, setHydrated] = useState(false);
   const scanTimer = useRef<number | null>(null);
   const statusTimer = useRef<number | null>(null);
   const undoStatusTimer = useRef<number | null>(null);
-
 
   useEffect(() => {
     scanProgressRef.current = scanProgress;
@@ -161,7 +161,6 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
       if (undoStatusTimer.current) window.clearTimeout(undoStatusTimer.current);
     };
   }, []);
-
 
   const filteredGroups = useMemo(() => {
     const minBytes = minDupSize * 1024 * 1024;
@@ -355,11 +354,7 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     }, 600) as unknown as number;
   };
 
-
-
-
   const clearScanUndoHistory = () => setScanUndoStack([]);
-
 
   const confirmDelete = () => {
     const removed = selectedFiles;
@@ -380,7 +375,7 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     };
     setHistory((h) => [entry, ...h]);
     toast.success(`Reclaimed ${formatBytes(removedBytes)}`, {
-      description: `${removed.length} file${removed.length === 1 ? "" : "s"} scrubbed clean.`,
+      description: `${removed.length} file${removed.length === 1 ? "" : "s"} cleaned.`,
       action: {
         label: "Undo",
         onClick: () => {

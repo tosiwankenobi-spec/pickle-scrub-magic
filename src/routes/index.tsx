@@ -10,21 +10,15 @@ import {
   Undo2,
   XCircle,
   CheckCircle2,
+  Search,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { AppShell } from "@/components/app-shell";
-import { AnimatedPickleIcon } from "@/components/animated-pickle-icon";
 import { usePickle } from "@/lib/pickle-context";
-import {
-  TOTAL_STORAGE,
-  USED_STORAGE,
-  RECLAIMABLE,
-  formatBytes,
-} from "@/lib/pickle-data";
+import { TOTAL_STORAGE, USED_STORAGE, RECLAIMABLE, formatBytes } from "@/lib/pickle-data";
 import { CountUpBytes, LegendDot } from "@/components/pickle/shared";
 
 export const Route = createFileRoute("/")({
@@ -93,6 +87,7 @@ function Dashboard() {
 
   const usedPct = (USED_STORAGE / TOTAL_STORAGE) * 100;
   const reclaimPct = (RECLAIMABLE / TOTAL_STORAGE) * 100;
+  const freePct = 100 - usedPct;
   const lastUndo = scanUndoStack[scanUndoStack.length - 1];
   const undoLabel = lastUndo
     ? lastUndo.kind === "cancel"
@@ -126,49 +121,81 @@ function Dashboard() {
       <span className="sr-only" aria-live="polite" aria-atomic="true">
         {scanCardDescription}
       </span>
-      <div className="flex flex-wrap items-end justify-between gap-3">
+
+      {/* Header */}
+      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:flex sm:flex-wrap sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold md:text-3xl">Good afternoon 🥒</h1>
+          <h1 className="text-2xl font-bold tracking-tight md:text-3xl font-display">
+            Good afternoon
+          </h1>
           <p className="text-sm text-muted-foreground">
             {formatBytes(USED_STORAGE)} used · {formatBytes(RECLAIMABLE)} reclaimable
           </p>
         </div>
-      </div>
+        <div className="rounded-xl border border-border bg-secondary px-3 py-1.5">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-secondary-foreground">
+            Premium Active
+          </span>
+        </div>
+      </header>
 
-      {scanning && (
-        <Card className="border-primary/30 bg-primary/5">
-          <CardContent className="space-y-3 pt-6">
-            <div className="flex items-center gap-2 text-sm font-medium">
-              <Loader2 className="h-4 w-4 animate-spin text-primary" />
-              Scanning storage… {scanProgress}%
+      {/* Storage bar card */}
+      <Card className="relative overflow-hidden border-border bg-secondary/40">
+        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
+        <CardContent className="relative space-y-6 py-6">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Storage used
+              </div>
+              <div className="mt-1 text-3xl font-bold md:text-4xl font-display">
+                <CountUpBytes value={USED_STORAGE} />{" "}
+                <span className="text-base font-medium text-muted-foreground">
+                  / {formatBytes(TOTAL_STORAGE)}
+                </span>
+              </div>
             </div>
-            <Progress value={scanProgress} className="h-2" />
-            <p className="text-xs text-muted-foreground">
-              Grouping by size, sampling partial hash, verifying with SHA-256.
-            </p>
-          </CardContent>
-        </Card>
-      )}
+            <div className="rounded-xl bg-primary/10 px-3 py-2 text-right">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                Reclaimable
+              </div>
+              <div className="text-lg font-bold text-primary">
+                <CountUpBytes value={RECLAIMABLE} />
+              </div>
+            </div>
+          </div>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <ActionTile
-          title="Scan"
-          description={scanCardDescription}
-          icon={
-            scanUndoStatus === "retrying" || scanUndoStatus === "undoing" ? (
-              <Loader2 className="h-10 w-10 animate-spin text-primary" />
-            ) : scanUndoStatus === "success" ? (
-              <CheckCircle2 className="h-10 w-10 text-emerald-500" />
-            ) : scanUndoStatus === "retry-error" || scanUndoStatus === "error" ? (
-              <XCircle className="h-10 w-10 text-destructive" />
-            ) : scanStatus === "cancelling" ? (
-              <Loader2 className="h-10 w-10 animate-spin text-primary" />
-            ) : scanStatus === "error" ? (
-              <XCircle className="h-10 w-10 text-destructive" />
-            ) : (
-              <AnimatedPickleIcon size={44} scanning={scanning} />
-            )
-          }
+          <div className="relative h-4 overflow-hidden rounded-full bg-muted">
+            <div
+              className="absolute left-0 top-0 h-full bg-primary transition-all duration-500"
+              style={{ width: `${usedPct}%` }}
+            />
+            <div
+              className="absolute top-0 h-full bg-ocean-500 transition-all duration-500"
+              style={{ left: `${usedPct - reclaimPct}%`, width: `${reclaimPct}%` }}
+            />
+            <div
+              className="absolute top-0 h-full bg-muted-foreground/30 transition-all duration-500"
+              style={{ left: `${usedPct}%`, width: `${freePct}%` }}
+            />
+          </div>
+
+          <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
+            <LegendDot color="bg-primary" label={`Used ${formatBytes(USED_STORAGE)}`} />
+            <LegendDot color="bg-ocean-500" label={`Reclaimable ${formatBytes(RECLAIMABLE)}`} />
+            <LegendDot
+              color="bg-muted-foreground/40"
+              label={`Free ${formatBytes(TOTAL_STORAGE - USED_STORAGE)}`}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Bento grid */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:grid-rows-2">
+        {/* Quick Scan — large, accent */}
+        <button
+          type="button"
           onClick={() => {
             if (scanUndoStatus === "error" || scanUndoStatus === "retry-error") {
               undoScanAction(true);
@@ -178,36 +205,115 @@ function Dashboard() {
               startScan();
             }
           }}
-          badge={scanning ? `${scanProgress}%` : undefined}
-          accent
-          disabled={scanStatus === "cancelling" || scanUndoStatus === "undoing" || scanUndoStatus === "retrying"}
-        />
+          disabled={
+            scanStatus === "cancelling" ||
+            scanUndoStatus === "undoing" ||
+            scanUndoStatus === "retrying"
+          }
+          className={`group relative col-span-1 row-span-2 overflow-hidden rounded-3xl bg-primary p-6 text-left text-primary-foreground transition focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-80 md:col-span-1 md:row-span-2`}
+        >
+          <div className="flex h-full flex-col justify-between">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-foreground/10">
+              {scanUndoStatus === "retrying" || scanUndoStatus === "undoing" ? (
+                <Loader2 className="h-7 w-7 animate-spin" />
+              ) : scanUndoStatus === "success" ? (
+                <CheckCircle2 className="h-7 w-7" />
+              ) : scanUndoStatus === "retry-error" || scanUndoStatus === "error" ? (
+                <XCircle className="h-7 w-7" />
+              ) : scanStatus === "cancelling" ? (
+                <Loader2 className="h-7 w-7 animate-spin" />
+              ) : scanStatus === "error" ? (
+                <XCircle className="h-7 w-7" />
+              ) : (
+                <Search className="h-7 w-7" />
+              )}
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-2xl font-bold font-display">Quick Scan</h2>
+                {scanning && (
+                  <Badge className="bg-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/20">
+                    {scanProgress}%
+                  </Badge>
+                )}
+              </div>
+              <p className="mt-1 text-sm text-primary-foreground/70">{scanCardDescription}</p>
+            </div>
+          </div>
+        </button>
 
+        {/* Smart Clean */}
+        <Link to="/clean" className="group block">
+          <Card className="h-full border-border bg-card transition hover:border-primary/40 hover:bg-secondary/40">
+            <CardContent className="flex h-full flex-col justify-between p-5">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary text-secondary-foreground">
+                <Sparkles className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold font-display">Smart Clean</h3>
+                  <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
+                    5 categories
+                  </Badge>
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">Clear caches & stale files</p>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
 
-        <ActionTile
-          title="Clean"
-          description="Clear caches & stale files"
-          icon={<Sparkles className="h-7 w-7" />}
-          to="/clean"
-          badge="5 categories"
-        />
-        <ActionTile
-          title="Duplicates"
-          description="Review matching files"
-          icon={<Copy className="h-7 w-7" />}
-          to="/duplicates"
-          badge={`${duplicateCount} files`}
-        />
-        <ActionTile
-          title="History"
-          description="Past cleanups & undo"
-          icon={<History className="h-7 w-7" />}
-          to="/history"
-        />
+        {/* Duplicates */}
+        <Link to="/duplicates" className="group block">
+          <Card className="h-full border-border bg-card transition hover:border-primary/40 hover:bg-secondary/40">
+            <CardContent className="flex h-full flex-col justify-between p-5">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary text-secondary-foreground">
+                <Copy className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold font-display">Duplicates</h3>
+                  <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
+                    {duplicateCount} files
+                  </Badge>
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">Review matching files</p>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+
+        {/* History */}
+        <Link to="/history" className="group block md:col-span-2">
+          <Card className="h-full border-border bg-card transition hover:border-primary/40 hover:bg-secondary/40">
+            <CardContent className="flex h-full items-center justify-between p-5">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary text-secondary-foreground">
+                  <History className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-semibold font-display">History</h3>
+                  <p className="mt-1 text-xs text-muted-foreground">Past cleanups & undo</p>
+                </div>
+              </div>
+              <div className="text-muted-foreground">
+                <svg
+                  className="h-5 w-5 transition group-hover:translate-x-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
 
+      {/* Scan undo history */}
       {scanUndoStack.length > 0 && (
-        <Card className="border-dashed">
+        <Card className="border-dashed border-border">
           <CardContent className="flex flex-wrap items-center justify-between gap-3 py-3">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <Undo2 className="h-3.5 w-3.5" />
@@ -223,9 +329,7 @@ function Dashboard() {
                       e.kind === "cancel" ? "bg-destructive/60" : "bg-primary/60"
                     }`}
                     title={
-                      e.kind === "cancel"
-                        ? `Cancelled at ${e.prev.progress}%`
-                        : "Started scan"
+                      e.kind === "cancel" ? `Cancelled at ${e.prev.progress}%` : "Started scan"
                     }
                   />
                 ))}
@@ -237,7 +341,6 @@ function Dashboard() {
                 variant="outline"
                 className="h-7 gap-1 px-2 text-xs"
                 onClick={() => undoScanAction()}
-
               >
                 <Undo2 className="h-3.5 w-3.5" />
                 Undo · {undoLabel}
@@ -254,159 +357,27 @@ function Dashboard() {
           </CardContent>
         </Card>
       )}
-
-
-
-      <Card className="overflow-hidden">
-        <CardContent className="relative pt-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                Storage used
-              </div>
-              <div className="mt-1 text-3xl font-bold">
-                <CountUpBytes value={USED_STORAGE} />{" "}
-                <span className="text-base font-medium text-muted-foreground">
-                  / {formatBytes(TOTAL_STORAGE)}
-                </span>
-              </div>
-            </div>
-            <div className="rounded-xl bg-primary/10 px-3 py-2 text-right">
-              <div className="text-[11px] font-medium uppercase tracking-wide text-primary">
-                Reclaimable
-              </div>
-              <div className="text-lg font-bold text-primary">
-                <CountUpBytes value={RECLAIMABLE} />
-              </div>
-            </div>
-          </div>
-          <div className="relative mt-5 h-3 overflow-hidden rounded-full bg-muted">
-            <div
-              className="absolute left-0 top-0 h-full bg-gradient-to-r from-emerald-500 to-primary"
-              style={{ width: `${usedPct}%` }}
-            />
-            <div
-              className="absolute top-0 h-full bg-yellow-400/70"
-              style={{ left: `${usedPct - reclaimPct}%`, width: `${reclaimPct}%` }}
-            />
-          </div>
-          <div className="mt-3 flex flex-wrap gap-4 text-xs text-muted-foreground">
-            <LegendDot color="bg-primary" label={`Used ${formatBytes(USED_STORAGE)}`} />
-            <LegendDot
-              color="bg-yellow-400"
-              label={`Reclaimable ${formatBytes(RECLAIMABLE)}`}
-            />
-            <LegendDot
-              color="bg-muted-foreground/40"
-              label={`Free ${formatBytes(TOTAL_STORAGE - USED_STORAGE)}`}
-            />
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
-
-type ActionTileProps = {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  badge?: string;
-  accent?: boolean;
-  disabled?: boolean;
-} & (
-  | { to: "/clean" | "/duplicates" | "/history" | "/settings" | "/roadmap"; onClick?: () => void }
-  | { to?: undefined; onClick: () => void }
-);
-
-function ActionTile({
-  title,
-  description,
-  icon,
-  to,
-  onClick,
-  badge,
-  accent,
-  disabled,
-}: ActionTileProps) {
-  const card = (
-    <Card
-      className={`group transition ${
-        disabled
-          ? "cursor-not-allowed opacity-70"
-          : "cursor-pointer active:scale-[0.98]"
-      } ${
-        accent
-          ? disabled
-            ? "border-primary/30 bg-primary/5"
-            : "border-primary/40 bg-primary/5 hover:border-primary/60 hover:bg-primary/10"
-          : disabled
-            ? "bg-accent/20"
-            : "hover:border-primary/40 hover:bg-accent/30"
-      }`}
-    >
-      <CardContent className="flex flex-col items-start gap-3 p-4 pt-5 md:p-5 md:pt-6">
-        <div
-          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition ${
-            accent
-              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-              : "bg-accent text-accent-foreground"
-          }`}
-        >
-          {icon}
-        </div>
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="font-semibold">{title}</h3>
-            {badge && (
-              <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
-                {badge}
-              </Badge>
-            )}
-          </div>
-          <p className="mt-1 text-xs leading-snug text-muted-foreground">{description}</p>
-        </div>
-      </CardContent>
-    </Card>
-  );
-
-  if (to) {
-    return (
-      <Link to={to} onClick={onClick}>
-        {card}
-      </Link>
-    );
-  }
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className="text-left"
-    >
-      {card}
-    </button>
-  );
-}
-
 
 function Onboarding({ onDone }: { onDone: () => void }) {
   const [step, setStep] = useState(0);
   const steps = [
     {
-      icon: <span className="text-5xl">🥒</span>,
-      title: "Meet Pickle Polish",
-      body: "A tiny green scrubber for your phone storage. We find duplicates, junk, and stale files, and let you clean with confidence.",
+      icon: <Search className="h-12 w-12 text-primary" />,
+      title: "Smart storage analysis",
+      body: "Find duplicates, stale downloads, and cached junk with a focused, professional scan engine.",
     },
     {
       icon: <Lock className="h-12 w-12 text-primary" />,
       title: "Everything stays on-device",
-      body: "In the native app, scanning happens locally through Android MediaStore. Nothing is uploaded — no accounts, no cloud, no ads.",
+      body: "In the native app, scanning happens locally through Android MediaStore. No uploads, no accounts, no ads.",
     },
     {
       icon: <ShieldCheck className="h-12 w-12 text-primary" />,
-      title: "We'll ask for these permissions",
-      body: "READ_MEDIA_IMAGES, READ_MEDIA_VIDEO, READ_MEDIA_AUDIO on Android 13+, plus the system delete-confirmation dialog before any file is removed.",
+      title: "Permission-based cleanup",
+      body: "We request media read access, then use the system delete-confirmation dialog before any file is removed.",
     },
   ];
 
@@ -414,11 +385,11 @@ function Onboarding({ onDone }: { onDone: () => void }) {
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 py-12 text-center">
       <div className="w-full max-w-xs">
         <div className="mb-8 flex items-center justify-center">
-          <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-primary/10 text-primary">
+          <div className="flex h-24 w-24 items-center justify-center rounded-3xl bg-secondary text-secondary-foreground">
             {steps[step].icon}
           </div>
         </div>
-        <h2 className="text-2xl font-bold">{steps[step].title}</h2>
+        <h2 className="text-2xl font-bold font-display">{steps[step].title}</h2>
         <p className="mt-3 text-sm text-muted-foreground">{steps[step].body}</p>
 
         <div className="mt-8 flex justify-center gap-2">

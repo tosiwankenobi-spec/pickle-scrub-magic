@@ -79,19 +79,29 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Pickle Polish — Pickle-clean your phone storage" },
-      { name: "description", content: "Pickle Polish finds duplicates, junk, and stale files so you can scrub your phone storage clean." },
+      { title: "Pickle Polish — Phone storage optimizer" },
+      {
+        name: "description",
+        content:
+          "Reclaim storage with a clean, professional duplicate finder, junk cleaner, and file history tool.",
+      },
       { name: "author", content: "Pickle Polish" },
       { property: "og:title", content: "Pickle Polish" },
-      { property: "og:description", content: "Pickle-clean your phone storage — find duplicates, clear junk, reclaim space." },
+      {
+        property: "og:description",
+        content: "Professional phone storage optimization — duplicates, junk, and history.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: appCss,
+        href: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=DM+Sans:wght@400;500;700&display=swap",
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],

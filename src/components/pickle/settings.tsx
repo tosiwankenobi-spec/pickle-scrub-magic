@@ -13,15 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Image as ImageIcon,
-  Video,
-  Music,
-  FileText,
-  Package,
-  Moon,
-  Sun,
-} from "lucide-react";
+import { Image as ImageIcon, Video, Music, FileText, Package, Moon, Sun } from "lucide-react";
 import { usePickle } from "@/lib/pickle-context";
 import { type FileType } from "@/lib/pickle-data";
 
@@ -51,22 +43,20 @@ export function SettingsView() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold md:text-3xl">Settings</h1>
-        <p className="text-sm text-muted-foreground">Tune Pickle Polish to your taste.</p>
+        <h1 className="text-2xl font-bold md:text-3xl font-display">Settings</h1>
+        <p className="text-sm text-muted-foreground">Tune the optimizer to your preferences.</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Appearance</CardTitle>
+          <CardTitle className="text-base font-display">Appearance</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {darkMode ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
             <div>
               <div className="font-medium">Dark mode</div>
-              <div className="text-xs text-muted-foreground">
-                Easier on the eyes during late-night scrubbing.
-              </div>
+              <div className="text-xs text-muted-foreground">Easier on the eyes in low light.</div>
             </div>
           </div>
           <Switch checked={darkMode} onCheckedChange={setDarkMode} />
@@ -75,8 +65,8 @@ export function SettingsView() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Duplicate detection</CardTitle>
-          <CardDescription>How aggressive should the scrubbing get?</CardDescription>
+          <CardTitle className="text-base font-display">Duplicate detection</CardTitle>
+          <CardDescription>Adjust scan precision and scope.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
@@ -124,9 +114,7 @@ export function SettingsView() {
                   </span>
                   <Switch
                     checked={enabledTypes[t.id]}
-                    onCheckedChange={(v) =>
-                      setEnabledTypes((prev) => ({ ...prev, [t.id]: v }))
-                    }
+                    onCheckedChange={(v) => setEnabledTypes((prev) => ({ ...prev, [t.id]: v }))}
                   />
                 </label>
               ))}
@@ -137,10 +125,8 @@ export function SettingsView() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Excluded folders</CardTitle>
-          <CardDescription>
-            Folders Pickle Polish will never peek into.
-          </CardDescription>
+          <CardTitle className="text-base font-display">Excluded folders</CardTitle>
+          <CardDescription>Folders the optimizer will never scan.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex flex-wrap gap-2">

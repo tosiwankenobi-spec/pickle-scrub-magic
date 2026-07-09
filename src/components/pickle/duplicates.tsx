@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -55,8 +49,12 @@ export function Duplicates() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={startScan} disabled={scanning} className="gap-2">
-            {scanning ? <Loader2 className="h-4 w-4 animate-spin" /> : <BroomIcon className="h-4 w-4" />}
-            {scanning ? "Scrubbing…" : "Rescan"}
+            {scanning ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <BroomIcon className="h-4 w-4" />
+            )}
+            {scanning ? "Scanning…" : "Rescan"}
           </Button>
           <Button onClick={selectAllExceptRecommended} variant="secondary">
             Select all except recommended
@@ -96,7 +94,7 @@ export function Duplicates() {
                       isSelected
                         ? "border-primary bg-primary/5"
                         : f.recommended
-                          ? "border-emerald-200 bg-emerald-50/50 dark:bg-emerald-950/20"
+                          ? "border-primary/30 bg-primary/5"
                           : "border-border hover:bg-muted/50"
                     }`}
                   >
@@ -109,7 +107,7 @@ export function Duplicates() {
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="truncate font-medium">{f.name}</span>
                         {f.recommended && (
-                          <Badge className="gap-1 bg-emerald-600 text-white hover:bg-emerald-600">
+                          <Badge className="gap-1 bg-primary text-primary-foreground hover:bg-primary">
                             <Check className="h-3 w-3" /> Recommended keep
                           </Badge>
                         )}
@@ -125,9 +123,7 @@ export function Duplicates() {
                         <span className="uppercase">{f.type}</span>
                       </div>
                     </div>
-                    <div className="text-right text-sm font-semibold">
-                      {formatBytes(f.size)}
-                    </div>
+                    <div className="text-right text-sm font-semibold">{formatBytes(f.size)}</div>
                   </label>
                 );
               })}
@@ -150,9 +146,7 @@ export function Duplicates() {
             <div className="font-semibold">
               {selected.size} selected · {formatBytes(reclaimableSelected)}
             </div>
-            <div className="text-xs text-muted-foreground">
-              Recommended keepers stay untouched.
-            </div>
+            <div className="text-xs text-muted-foreground">Recommended keepers stay untouched.</div>
           </div>
           <div className="flex gap-2">
             <Button variant="ghost" onClick={clearSelection} disabled={selected.size === 0}>
@@ -179,8 +173,7 @@ export function Duplicates() {
               Review before deleting
             </DialogTitle>
             <DialogDescription>
-              Pickle Polish will move these files to a recoverable bin. You can undo right
-              after.
+              Pickle Polish will move these files to a recoverable bin. You can undo right after.
             </DialogDescription>
           </DialogHeader>
           <div className="max-h-64 space-y-2 overflow-y-auto rounded-xl border border-border bg-muted/40 p-3">
@@ -204,9 +197,7 @@ export function Duplicates() {
             <span className="text-accent-foreground">
               {selectedFiles.length} file{selectedFiles.length === 1 ? "" : "s"} · reclaim
             </span>
-            <span className="font-semibold text-primary">
-              {formatBytes(reclaimableSelected)}
-            </span>
+            <span className="font-semibold text-primary">{formatBytes(reclaimableSelected)}</span>
           </div>
           <DialogFooter className="gap-2 sm:gap-2">
             <Button variant="outline" onClick={() => setConfirmOpen(false)}>
@@ -220,7 +211,7 @@ export function Duplicates() {
               disabled={selectedFiles.length === 0}
               className="gap-2"
             >
-              <Trash2 className="h-4 w-4" /> Scrub {selectedFiles.length} file
+              <Trash2 className="h-4 w-4" /> Clean {selectedFiles.length} file
               {selectedFiles.length === 1 ? "" : "s"}
             </Button>
           </DialogFooter>
