@@ -202,9 +202,7 @@ function Dashboard() {
             }
           }}
           disabled={scanStatus === "cancelling" || scanUndoStatus === "undoing" || scanUndoStatus === "retrying"}
-          className={`group relative col-span-1 row-span-2 overflow-hidden rounded-3xl bg-primary p-6 text-left text-primary-foreground transition focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-80 md:col-span-1 md:row-span-2 ${
-            scanning ? "animate-pulse" : ""
-          }`}
+          className={`group relative col-span-1 row-span-2 overflow-hidden rounded-3xl bg-primary p-6 text-left text-primary-foreground transition focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-80 md:col-span-1 md:row-span-2`}
         >
           <div className="flex h-full flex-col justify-between">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-foreground/10">
