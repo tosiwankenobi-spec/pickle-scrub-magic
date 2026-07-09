@@ -108,13 +108,7 @@ function Dashboard() {
         <ActionTile
           title="Scan"
           description={scanning ? "Scanning your storage…" : "Find duplicates and junk"}
-          icon={
-            scanning ? (
-              <Loader2 className="h-7 w-7 animate-spin" />
-            ) : (
-              <BroomIcon className="h-7 w-7" />
-            )
-          }
+          icon={<AnimatedPickleIcon size={44} scanning={scanning} />}
           onClick={() => {
             if (!scanning) startScan();
           }}
