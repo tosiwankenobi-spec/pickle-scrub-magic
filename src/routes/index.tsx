@@ -234,9 +234,11 @@ function Dashboard() {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:grid-rows-2">
         {/* Quick Scan — large, accent */}
         <button
+          ref={scanCardRef}
           type="button"
           onClick={() => {
             if (scanUndoStatus === "error" || scanUndoStatus === "retry-error") {
+              undoTriggerRef.current = "scan-card";
               undoScanAction(true);
             } else if (scanning) {
               if (confirm("Cancel the scan?")) cancelScan();
