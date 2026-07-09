@@ -153,27 +153,7 @@ function Dashboard() {
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <ActionTile
           title="Scan"
-          description={
-            scanUndoStatus === "retrying"
-              ? "Retrying…"
-              : scanUndoStatus === "undoing"
-                ? "Undoing…"
-                : scanUndoStatus === "success"
-                  ? "Undo succeeded"
-                  : scanUndoStatus === "retry-error"
-                    ? "Undo failed — tap to retry again"
-                    : scanUndoStatus === "error"
-                      ? "Undo failed — tap to retry"
-                      : scanStatus === "error"
-                        ? "Cancel failed"
-                        : scanStatus === "cancelling"
-                          ? "Cancelling…"
-                          : scanning
-                            ? "Tap to cancel scan"
-                            : scanStatus === "cancelled"
-                              ? "Cancelled"
-                              : "Find duplicates and junk"
-          }
+          description={scanCardDescription}
 
 
 
