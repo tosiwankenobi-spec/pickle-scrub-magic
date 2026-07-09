@@ -33,7 +33,7 @@ export function Duplicates() {
     reclaimableSelected,
     selectedFiles,
     confirmDelete,
-    onScan,
+    startScan,
     scanning,
     scanProgress,
   } = usePickle();
