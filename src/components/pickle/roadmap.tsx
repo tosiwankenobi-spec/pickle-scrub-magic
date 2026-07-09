@@ -45,16 +45,16 @@ export function Roadmap() {
     {
       icon: <Zap className="h-5 w-5" />,
       title: "Background scheduling",
-      body: "WorkManager for weekly maintenance scrubs when the phone is idle & charging.",
+      body: "WorkManager for weekly maintenance cleanups when the phone is idle & charging.",
     },
   ];
   return (
     <div className="space-y-6">
-      <Card className="border-yellow-300/60 bg-yellow-50 dark:bg-yellow-950/20">
+      <Card className="border-primary/30 bg-primary/5">
         <CardContent className="flex gap-3 pt-6 text-sm">
-          <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-yellow-600" />
+          <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
           <div>
-            <div className="font-semibold">This is a web prototype.</div>
+            <div className="font-semibold font-display">This is a web prototype.</div>
             <p className="mt-1 text-muted-foreground">
               A real phone cleanup app needs native Android APIs for MediaStore scanning,
               storage/media permissions, duplicate hashing, and safe deletion. Everything below
@@ -64,7 +64,7 @@ export function Roadmap() {
         </CardContent>
       </Card>
       <div>
-        <h1 className="text-2xl font-bold md:text-3xl">Native Android roadmap</h1>
+        <h1 className="text-2xl font-bold md:text-3xl font-display">Native Android roadmap</h1>
         <p className="text-sm text-muted-foreground">
           What Pickle Polish becomes on-device.
         </p>
