@@ -130,19 +130,23 @@ function Dashboard() {
           description={
             scanUndoStatus === "undoing"
               ? "Undoing…"
-              : scanStatus === "error"
-                ? "Cancel failed"
-                : scanStatus === "cancelling"
-                  ? "Cancelling…"
-                  : scanning
-                    ? "Tap to cancel scan"
-                    : scanStatus === "cancelled"
-                      ? "Cancelled"
-                      : "Find duplicates and junk"
+              : scanUndoStatus === "error"
+                ? "Undo failed"
+                : scanStatus === "error"
+                  ? "Cancel failed"
+                  : scanStatus === "cancelling"
+                    ? "Cancelling…"
+                    : scanning
+                      ? "Tap to cancel scan"
+                      : scanStatus === "cancelled"
+                        ? "Cancelled"
+                        : "Find duplicates and junk"
           }
           icon={
             scanUndoStatus === "undoing" ? (
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            ) : scanUndoStatus === "error" ? (
+              <XCircle className="h-10 w-10 text-destructive" />
             ) : scanStatus === "cancelling" ? (
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
             ) : scanStatus === "error" ? (
@@ -162,6 +166,7 @@ function Dashboard() {
           accent
           disabled={scanStatus === "cancelling" || scanUndoStatus === "undoing"}
         />
+
 
         <ActionTile
           title="Clean"
