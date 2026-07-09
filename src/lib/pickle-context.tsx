@@ -342,10 +342,12 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
         return next;
       });
 
+      setScanUndoStatus("success");
       undoStatusTimer.current = window.setTimeout(() => {
         setScanUndoStatus("idle");
         undoStatusTimer.current = null;
-      }, 600) as unknown as number;
+      }, 1200) as unknown as number;
+
     }, 600) as unknown as number;
   };
 
