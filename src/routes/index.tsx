@@ -393,20 +393,22 @@ function PickleApp() {
 
 function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
-    <div className="flex items-center gap-2">
-      <div className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-emerald-600 shadow-lg shadow-primary/20">
-        <span className="text-lg">🥒</span>
-        <Sparkles className="absolute -right-1 -top-1 h-4 w-4 text-yellow-400 drop-shadow" />
-      </div>
-      {!compact && (
+    <div className="flex items-center gap-2.5">
+      <img
+        src={logoAsset.url}
+        alt="Pickle Polish logo"
+        className="h-11 w-11 rounded-2xl object-cover shadow-md shadow-primary/20 ring-1 ring-border"
+      />
+      {!compact ? (
         <div>
-          <div className="text-base font-bold leading-tight">Pickle Polish</div>
+          <div className="text-base font-bold leading-tight tracking-tight">Pickle Polish</div>
           <div className="text-[11px] text-muted-foreground">
             Pickle-clean your phone storage
           </div>
         </div>
+      ) : (
+        <div className="text-base font-bold tracking-tight">Pickle Polish</div>
       )}
-      {compact && <div className="text-base font-bold">Pickle Polish</div>}
     </div>
   );
 }
