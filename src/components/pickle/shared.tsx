@@ -7,7 +7,6 @@ import {
   Download,
   Package,
   Trash2,
-  Image as ImageIcon2,
   Wind,
   Smartphone,
 } from "lucide-react";
@@ -34,7 +33,7 @@ export function CategoryIcon({ icon }: { icon: CleanupCategory["icon"] }) {
     case "trash":
       return <Trash2 className="h-5 w-5" />;
     case "image":
-      return <ImageIcon2 className="h-5 w-5" />;
+      return <ImageIcon className="h-5 w-5" />;
     case "video":
       return <Video className="h-5 w-5" />;
     case "download":
