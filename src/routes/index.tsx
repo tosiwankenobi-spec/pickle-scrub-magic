@@ -72,9 +72,7 @@ export const Route = createFileRoute("/")({
   component: PickleApp,
 });
 
-// Broom icon substitute — lucide's "Broom" may not exist in installed version
-// so we fall back gracefully.
-const BroomIcon = (Broom as unknown as React.FC<{ className?: string }>) ?? Wand2;
+// (Broom icon lives at top of imports as BroomIcon alias.)
 
 type ViewId =
   | "onboarding"
