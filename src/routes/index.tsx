@@ -137,7 +137,7 @@ function Dashboard() {
                 : scanUndoStatus === "success"
                   ? "Undo succeeded"
                   : scanUndoStatus === "retry-error"
-                    ? "Retry failed — tap to retry again"
+                    ? "Undo failed — tap to retry again"
                     : scanUndoStatus === "error"
                       ? "Undo failed — tap to retry"
                       : scanStatus === "error"
