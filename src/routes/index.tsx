@@ -187,6 +187,17 @@ function Dashboard() {
   );
 }
 
+type ActionTileProps = {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  badge?: string;
+  accent?: boolean;
+} & (
+  | { to: "/clean" | "/duplicates" | "/history" | "/settings" | "/roadmap"; onClick?: () => void }
+  | { to?: undefined; onClick: () => void }
+);
+
 function ActionTile({
   title,
   description,
@@ -195,15 +206,7 @@ function ActionTile({
   onClick,
   badge,
   accent,
-}: {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  to?: string;
-  onClick?: () => void;
-  badge?: string;
-  accent?: boolean;
-}) {
+}: ActionTileProps) {
   const card = (
     <Card
       className={`group cursor-pointer transition active:scale-[0.98] ${
@@ -239,7 +242,7 @@ function ActionTile({
 
   if (to) {
     return (
-      <Link to={to as "/"} onClick={onClick}>
+      <Link to={to} onClick={onClick}>
         {card}
       </Link>
     );
