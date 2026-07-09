@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as RoadmapRouteImport } from './routes/roadmap'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as DuplicatesRouteImport } from './routes/duplicates'
 import { Route as CleanRouteImport } from './routes/clean'
@@ -18,6 +19,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoadmapRoute = RoadmapRouteImport.update({
+  id: '/roadmap',
+  path: '/roadmap',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HistoryRoute = HistoryRouteImport.update({
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/clean': typeof CleanRoute
   '/duplicates': typeof DuplicatesRoute
   '/history': typeof HistoryRoute
+  '/roadmap': typeof RoadmapRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/clean': typeof CleanRoute
   '/duplicates': typeof DuplicatesRoute
   '/history': typeof HistoryRoute
+  '/roadmap': typeof RoadmapRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRoutesById {
@@ -61,14 +69,28 @@ export interface FileRoutesById {
   '/clean': typeof CleanRoute
   '/duplicates': typeof DuplicatesRoute
   '/history': typeof HistoryRoute
+  '/roadmap': typeof RoadmapRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/clean' | '/duplicates' | '/history' | '/settings'
+  fullPaths:
+    | '/'
+    | '/clean'
+    | '/duplicates'
+    | '/history'
+    | '/roadmap'
+    | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/clean' | '/duplicates' | '/history' | '/settings'
-  id: '__root__' | '/' | '/clean' | '/duplicates' | '/history' | '/settings'
+  to: '/' | '/clean' | '/duplicates' | '/history' | '/roadmap' | '/settings'
+  id:
+    | '__root__'
+    | '/'
+    | '/clean'
+    | '/duplicates'
+    | '/history'
+    | '/roadmap'
+    | '/settings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,6 +98,7 @@ export interface RootRouteChildren {
   CleanRoute: typeof CleanRoute
   DuplicatesRoute: typeof DuplicatesRoute
   HistoryRoute: typeof HistoryRoute
+  RoadmapRoute: typeof RoadmapRoute
   SettingsRoute: typeof SettingsRoute
 }
 
@@ -86,6 +109,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/roadmap': {
+      id: '/roadmap'
+      path: '/roadmap'
+      fullPath: '/roadmap'
+      preLoaderRoute: typeof RoadmapRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/history': {
@@ -124,8 +154,19 @@ const rootRouteChildren: RootRouteChildren = {
   CleanRoute: CleanRoute,
   DuplicatesRoute: DuplicatesRoute,
   HistoryRoute: HistoryRoute,
+  RoadmapRoute: RoadmapRoute,
   SettingsRoute: SettingsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
