@@ -15,7 +15,7 @@ export function AnimatedPickleIcon({
       style={{ width: size, height: size }}
     >
       <img
-        src={picklePolish}
+        src={picklePolish.url}
         alt="Pickle polishing itself"
         width={size}
         height={size}
