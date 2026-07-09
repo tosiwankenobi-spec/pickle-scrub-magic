@@ -600,7 +600,7 @@ function Dashboard({
                 Storage used
               </div>
               <div className="mt-1 text-3xl font-bold">
-                {formatBytes(USED_STORAGE)}{" "}
+                <CountUpBytes value={USED_STORAGE} />{" "}
                 <span className="text-base font-medium text-muted-foreground">
                   / {formatBytes(TOTAL_STORAGE)}
                 </span>
@@ -610,7 +610,9 @@ function Dashboard({
               <div className="text-[11px] font-medium uppercase tracking-wide text-primary">
                 Reclaimable
               </div>
-              <div className="text-lg font-bold text-primary">{formatBytes(RECLAIMABLE)}</div>
+              <div className="text-lg font-bold text-primary">
+                <CountUpBytes value={RECLAIMABLE} />
+              </div>
             </div>
           </div>
           <div className="relative mt-5 h-3 overflow-hidden rounded-full bg-muted">
