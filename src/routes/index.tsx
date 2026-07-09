@@ -173,7 +173,7 @@ function Dashboard() {
 
           badge={scanning ? `${scanProgress}%` : undefined}
           accent
-          disabled={scanStatus === "cancelling" || scanUndoStatus === "undoing"}
+          disabled={scanStatus === "cancelling" || scanUndoStatus === "undoing" || scanUndoStatus === "retrying"}
         />
 
 
