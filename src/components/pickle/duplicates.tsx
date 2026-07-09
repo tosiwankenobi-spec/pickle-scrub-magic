@@ -220,7 +220,7 @@ export function Duplicates() {
               disabled={selectedFiles.length === 0}
               className="gap-2"
             >
-              <Trash2 className="h-4 w-4" /> Scrub {selectedFiles.length} file
+              <Trash2 className="h-4 w-4" /> Clean {selectedFiles.length} file
               {selectedFiles.length === 1 ? "" : "s"}
             </Button>
           </DialogFooter>
