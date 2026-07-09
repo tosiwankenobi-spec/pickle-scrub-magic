@@ -32,6 +32,7 @@ export type PickleContextType = {
   scanning: boolean;
   scanProgress: number;
   startScan: () => void;
+  cancelScan: () => void;
   filteredGroups: DuplicateGroup[];
   selectedFiles: MockFile[];
   reclaimableSelected: number;
