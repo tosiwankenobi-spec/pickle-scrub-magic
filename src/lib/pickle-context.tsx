@@ -156,8 +156,10 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     return () => {
       if (scanTimer.current) window.clearInterval(scanTimer.current);
       if (statusTimer.current) window.clearTimeout(statusTimer.current);
+      if (undoStatusTimer.current) window.clearTimeout(undoStatusTimer.current);
     };
   }, []);
+
 
   const filteredGroups = useMemo(() => {
     const minBytes = minDupSize * 1024 * 1024;
