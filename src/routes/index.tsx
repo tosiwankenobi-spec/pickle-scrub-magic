@@ -199,46 +199,58 @@ function ActionTile({
   title: string;
   description: string;
   icon: React.ReactNode;
-  to: string;
+  to?: string;
   onClick?: () => void;
   badge?: string;
   accent?: boolean;
 }) {
+  const card = (
+    <Card
+      className={`group cursor-pointer transition active:scale-[0.98] ${
+        accent
+          ? "border-primary/40 bg-primary/5 hover:border-primary/60 hover:bg-primary/10"
+          : "hover:border-primary/40 hover:bg-accent/30"
+      }`}
+    >
+      <CardContent className="flex flex-col items-start gap-3 p-4 pt-5 md:p-5 md:pt-6">
+        <div
+          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition ${
+            accent
+              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+              : "bg-accent text-accent-foreground"
+          }`}
+        >
+          {icon}
+        </div>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold">{title}</h3>
+            {badge && (
+              <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
+                {badge}
+              </Badge>
+            )}
+          </div>
+          <p className="mt-1 text-xs leading-snug text-muted-foreground">{description}</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  if (to) {
+    return (
+      <Link to={to as "/"} onClick={onClick}>
+        {card}
+      </Link>
+    );
+  }
   return (
-    <Link to={to as "/"} onClick={onClick}>
-      <Card
-        className={`group cursor-pointer transition active:scale-[0.98] ${
-          accent
-            ? "border-primary/40 bg-primary/5 hover:border-primary/60 hover:bg-primary/10"
-            : "hover:border-primary/40 hover:bg-accent/30"
-        }`}
-      >
-        <CardContent className="flex flex-col items-start gap-3 p-4 pt-5 md:p-5 md:pt-6">
-          <div
-            className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition ${
-              accent
-                ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                : "bg-accent text-accent-foreground"
-            }`}
-          >
-            {icon}
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="font-semibold">{title}</h3>
-              {badge && (
-                <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
-                  {badge}
-                </Badge>
-              )}
-            </div>
-            <p className="mt-1 text-xs leading-snug text-muted-foreground">{description}</p>
-          </div>
-        </CardContent>
-      </Card>
-    </Link>
+    <button type="button" onClick={onClick} className="text-left">
+      {card}
+    </button>
   );
 }
+
 
 function Onboarding({ onDone }: { onDone: () => void }) {
   const [step, setStep] = useState(0);
