@@ -194,7 +194,7 @@ export const cleanupCategories: CleanupCategory[] = [
     icon: "cache",
     size: 3.4 * 1024 * MB,
     count: 8421,
-    tint: "bg-emerald-100 text-emerald-700",
+    tint: "bg-primary/10 text-primary",
   },
   {
     id: "screenshots",
@@ -203,7 +203,7 @@ export const cleanupCategories: CleanupCategory[] = [
     icon: "image",
     size: 1.9 * 1024 * MB,
     count: 612,
-    tint: "bg-lime-100 text-lime-700",
+    tint: "bg-ocean-700/10 text-ocean-700",
   },
   {
     id: "downloads",
@@ -212,7 +212,7 @@ export const cleanupCategories: CleanupCategory[] = [
     icon: "download",
     size: 2.1 * 1024 * MB,
     count: 178,
-    tint: "bg-teal-100 text-teal-700",
+    tint: "bg-ocean-500/10 text-ocean-500",
   },
   {
     id: "videos",
@@ -221,7 +221,7 @@ export const cleanupCategories: CleanupCategory[] = [
     icon: "video",
     size: 5.6 * 1024 * MB,
     count: 14,
-    tint: "bg-green-100 text-green-700",
+    tint: "bg-ocean-800/10 text-ocean-800",
   },
   {
     id: "apps",
@@ -230,7 +230,7 @@ export const cleanupCategories: CleanupCategory[] = [
     icon: "app",
     size: 1.2 * 1024 * MB,
     count: 9,
-    tint: "bg-emerald-100 text-emerald-700",
+    tint: "bg-primary/10 text-primary",
   },
 ];
 
