@@ -257,6 +257,7 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     scanning,
     scanProgress,
     startScan,
+    cancelScan,
     filteredGroups,
     selectedFiles,
     reclaimableSelected,
