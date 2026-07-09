@@ -1326,3 +1326,23 @@ function FileIcon({ type }: { type: FileType }) {
       return <Package className={cls} />;
   }
 }
+
+/* ---------- Count-up animation ---------- */
+
+function CountUpBytes({ value, duration = 1100 }: { value: number; duration?: number }) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration);
+      // easeOutCubic
+      const eased = 1 - Math.pow(1 - t, 3);
+      setN(value * eased);
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [value, duration]);
+  return <>{formatBytes(n)}</>;
+}
