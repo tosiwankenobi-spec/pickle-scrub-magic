@@ -85,6 +85,29 @@ function Dashboard() {
     clearScanUndoHistory,
   } = usePickle();
 
+  const scanCardRef = useRef<HTMLButtonElement>(null);
+  const retryButtonRef = useRef<HTMLButtonElement>(null);
+  const undoTriggerRef = useRef<"scan-card" | "retry-button" | null>(null);
+
+  // Return focus to the control that started the undo/retry once the
+  // operation completes or fails, so keyboard users are not left stranded.
+  useEffect(() => {
+    if (
+      scanUndoStatus === "success" ||
+      scanUndoStatus === "error" ||
+      scanUndoStatus === "retry-error"
+    ) {
+      window.setTimeout(() => {
+        if (undoTriggerRef.current === "retry-button" && retryButtonRef.current) {
+          retryButtonRef.current.focus();
+        } else if (scanCardRef.current) {
+          scanCardRef.current.focus();
+        }
+        undoTriggerRef.current = null;
+      }, 0);
+    }
+  }, [scanUndoStatus]);
+
   const usedPct = (USED_STORAGE / TOTAL_STORAGE) * 100;
   const reclaimPct = (RECLAIMABLE / TOTAL_STORAGE) * 100;
   const freePct = 100 - usedPct;
