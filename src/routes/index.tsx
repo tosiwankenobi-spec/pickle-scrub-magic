@@ -74,7 +74,7 @@ function HomePage() {
 }
 
 function Dashboard() {
-  const { startScan, cancelScan, scanning, scanProgress, duplicateCount } = usePickle();
+  const { startScan, cancelScan, scanning, scanProgress, scanStatus, duplicateCount } = usePickle();
   const usedPct = (USED_STORAGE / TOTAL_STORAGE) * 100;
   const reclaimPct = (RECLAIMABLE / TOTAL_STORAGE) * 100;
 
