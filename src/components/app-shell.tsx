@@ -37,8 +37,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 to={item.to}
                 title={item.label}
                 activeProps={{
-                  className:
-                    "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm",
+                  className: "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm",
                 }}
                 inactiveProps={{
                   className:
@@ -63,7 +62,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           >
             {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
-          <div className="h-8 w-8 rounded-full border border-sidebar-border bg-sidebar-accent" aria-label="Profile" />
+          <div
+            className="h-8 w-8 rounded-full border border-sidebar-border bg-sidebar-accent"
+            aria-label="Profile"
+          />
         </div>
       </aside>
 
@@ -102,7 +104,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 function BrandMark() {
   return (
     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <rect x="4" y="4" width="16" height="16" rx="3" />
         <path d="M9 12h6" />
       </svg>

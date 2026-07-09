@@ -65,9 +65,7 @@ export function Roadmap() {
       </Card>
       <div>
         <h1 className="text-2xl font-bold md:text-3xl font-display">Native Android roadmap</h1>
-        <p className="text-sm text-muted-foreground">
-          What Pickle Polish becomes on-device.
-        </p>
+        <p className="text-sm text-muted-foreground">What Pickle Polish becomes on-device.</p>
       </div>
       <div className="grid gap-3 md:grid-cols-2">
         {items.map((i) => (

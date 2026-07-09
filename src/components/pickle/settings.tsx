@@ -13,15 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Image as ImageIcon,
-  Video,
-  Music,
-  FileText,
-  Package,
-  Moon,
-  Sun,
-} from "lucide-react";
+import { Image as ImageIcon, Video, Music, FileText, Package, Moon, Sun } from "lucide-react";
 import { usePickle } from "@/lib/pickle-context";
 import { type FileType } from "@/lib/pickle-data";
 
@@ -64,9 +56,7 @@ export function SettingsView() {
             {darkMode ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
             <div>
               <div className="font-medium">Dark mode</div>
-              <div className="text-xs text-muted-foreground">
-                Easier on the eyes in low light.
-              </div>
+              <div className="text-xs text-muted-foreground">Easier on the eyes in low light.</div>
             </div>
           </div>
           <Switch checked={darkMode} onCheckedChange={setDarkMode} />
@@ -124,9 +114,7 @@ export function SettingsView() {
                   </span>
                   <Switch
                     checked={enabledTypes[t.id]}
-                    onCheckedChange={(v) =>
-                      setEnabledTypes((prev) => ({ ...prev, [t.id]: v }))
-                    }
+                    onCheckedChange={(v) => setEnabledTypes((prev) => ({ ...prev, [t.id]: v }))}
                   />
                 </label>
               ))}
@@ -138,9 +126,7 @@ export function SettingsView() {
       <Card>
         <CardHeader>
           <CardTitle className="text-base font-display">Excluded folders</CardTitle>
-          <CardDescription>
-            Folders the optimizer will never scan.
-          </CardDescription>
+          <CardDescription>Folders the optimizer will never scan.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex flex-wrap gap-2">

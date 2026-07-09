@@ -18,12 +18,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AppShell } from "@/components/app-shell";
 import { usePickle } from "@/lib/pickle-context";
-import {
-  TOTAL_STORAGE,
-  USED_STORAGE,
-  RECLAIMABLE,
-  formatBytes,
-} from "@/lib/pickle-data";
+import { TOTAL_STORAGE, USED_STORAGE, RECLAIMABLE, formatBytes } from "@/lib/pickle-data";
 import { CountUpBytes, LegendDot } from "@/components/pickle/shared";
 
 export const Route = createFileRoute("/")({
@@ -130,13 +125,17 @@ function Dashboard() {
       {/* Header */}
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:flex sm:flex-wrap sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight md:text-3xl font-display">Good afternoon</h1>
+          <h1 className="text-2xl font-bold tracking-tight md:text-3xl font-display">
+            Good afternoon
+          </h1>
           <p className="text-sm text-muted-foreground">
             {formatBytes(USED_STORAGE)} used · {formatBytes(RECLAIMABLE)} reclaimable
           </p>
         </div>
         <div className="rounded-xl border border-border bg-secondary px-3 py-1.5">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-secondary-foreground">Premium Active</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-secondary-foreground">
+            Premium Active
+          </span>
         </div>
       </header>
 
@@ -157,7 +156,9 @@ function Dashboard() {
               </div>
             </div>
             <div className="rounded-xl bg-primary/10 px-3 py-2 text-right">
-              <div className="text-[11px] font-bold uppercase tracking-wider text-primary">Reclaimable</div>
+              <div className="text-[11px] font-bold uppercase tracking-wider text-primary">
+                Reclaimable
+              </div>
               <div className="text-lg font-bold text-primary">
                 <CountUpBytes value={RECLAIMABLE} />
               </div>
@@ -182,7 +183,10 @@ function Dashboard() {
           <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
             <LegendDot color="bg-primary" label={`Used ${formatBytes(USED_STORAGE)}`} />
             <LegendDot color="bg-ocean-500" label={`Reclaimable ${formatBytes(RECLAIMABLE)}`} />
-            <LegendDot color="bg-muted-foreground/40" label={`Free ${formatBytes(TOTAL_STORAGE - USED_STORAGE)}`} />
+            <LegendDot
+              color="bg-muted-foreground/40"
+              label={`Free ${formatBytes(TOTAL_STORAGE - USED_STORAGE)}`}
+            />
           </div>
         </CardContent>
       </Card>
@@ -201,7 +205,11 @@ function Dashboard() {
               startScan();
             }
           }}
-          disabled={scanStatus === "cancelling" || scanUndoStatus === "undoing" || scanUndoStatus === "retrying"}
+          disabled={
+            scanStatus === "cancelling" ||
+            scanUndoStatus === "undoing" ||
+            scanUndoStatus === "retrying"
+          }
           className={`group relative col-span-1 row-span-2 overflow-hidden rounded-3xl bg-primary p-6 text-left text-primary-foreground transition focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-80 md:col-span-1 md:row-span-2`}
         >
           <div className="flex h-full flex-col justify-between">
@@ -244,7 +252,9 @@ function Dashboard() {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold font-display">Smart Clean</h3>
-                  <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">5 categories</Badge>
+                  <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
+                    5 categories
+                  </Badge>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">Clear caches & stale files</p>
               </div>
@@ -262,7 +272,9 @@ function Dashboard() {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold font-display">Duplicates</h3>
-                  <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">{duplicateCount} files</Badge>
+                  <Badge variant="secondary" className="px-1.5 py-0 text-[10px]">
+                    {duplicateCount} files
+                  </Badge>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">Review matching files</p>
               </div>
@@ -284,7 +296,13 @@ function Dashboard() {
                 </div>
               </div>
               <div className="text-muted-foreground">
-                <svg className="h-5 w-5 transition group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <svg
+                  className="h-5 w-5 transition group-hover:translate-x-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
               </div>
@@ -311,9 +329,7 @@ function Dashboard() {
                       e.kind === "cancel" ? "bg-destructive/60" : "bg-primary/60"
                     }`}
                     title={
-                      e.kind === "cancel"
-                        ? `Cancelled at ${e.prev.progress}%`
-                        : "Started scan"
+                      e.kind === "cancel" ? `Cancelled at ${e.prev.progress}%` : "Started scan"
                     }
                   />
                 ))}
