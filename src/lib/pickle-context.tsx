@@ -203,7 +203,8 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const startScan = (resumeFrom = 0) => {
+  // Internal: run a scan without touching the undo stack.
+  const runScan = (resumeFrom: number) => {
     clearStatusTimer();
     setScanStatus("idle");
     setScanning(true);
@@ -224,8 +225,8 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     }, 90) as unknown as number;
   };
 
-  const cancelScan = () => {
-    const progressAtCancel = scanProgressRef.current;
+  // Internal: stop a scan without touching the undo stack.
+  const stopScan = () => {
     if (scanTimer.current) window.clearInterval(scanTimer.current);
     setScanning(false);
     setScanProgress(0);
@@ -238,15 +239,63 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
         statusTimer.current = null;
       }, 1400);
     }, 800) as unknown as number;
+  };
+
+  const pushUndo = (entry: ScanUndoEntry) => {
+    setScanUndoStack((s) => [...s, entry].slice(-20));
+  };
+
+  const startScan = () => {
+    // Snapshot BEFORE starting a fresh scan (idle state).
+    pushUndo({
+      id: `su${Date.now()}`,
+      kind: "resume",
+      at: Date.now(),
+      prev: { scanning: false, progress: 0 },
+    });
+    runScan(0);
+  };
+
+  const cancelScan = () => {
+    const progressAtCancel = scanProgressRef.current;
+    pushUndo({
+      id: `su${Date.now()}`,
+      kind: "cancel",
+      at: Date.now(),
+      prev: { scanning: true, progress: progressAtCancel },
+    });
+    stopScan();
     toast("Scan cancelled", {
       description: "No changes were made.",
       action: {
         label: "Undo",
-        onClick: () => startScan(progressAtCancel),
+        onClick: () => undoScanAction(),
       },
       duration: 6000,
     });
   };
+
+  const undoScanAction = () => {
+    setScanUndoStack((stack) => {
+      if (stack.length === 0) return stack;
+      const next = stack.slice(0, -1);
+      const last = stack[stack.length - 1];
+      // Restore the snapshot captured before that action.
+      if (last.prev.scanning) {
+        runScan(last.prev.progress);
+        toast("Resumed scan", {
+          description: `Continuing from ${last.prev.progress}%.`,
+        });
+      } else {
+        stopScan();
+        toast("Reverted", { description: "Scan is idle again." });
+      }
+      return next;
+    });
+  };
+
+  const clearScanUndoHistory = () => setScanUndoStack([]);
+
 
   const confirmDelete = () => {
     const removed = selectedFiles;
