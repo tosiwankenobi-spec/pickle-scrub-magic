@@ -51,13 +51,13 @@ export function SettingsView() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold md:text-3xl">Settings</h1>
-        <p className="text-sm text-muted-foreground">Tune Pickle Polish to your taste.</p>
+        <h1 className="text-2xl font-bold md:text-3xl font-display">Settings</h1>
+        <p className="text-sm text-muted-foreground">Tune the optimizer to your preferences.</p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Appearance</CardTitle>
+          <CardTitle className="text-base font-display">Appearance</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -65,7 +65,7 @@ export function SettingsView() {
             <div>
               <div className="font-medium">Dark mode</div>
               <div className="text-xs text-muted-foreground">
-                Easier on the eyes during late-night scrubbing.
+                Easier on the eyes in low light.
               </div>
             </div>
           </div>
@@ -75,8 +75,8 @@ export function SettingsView() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Duplicate detection</CardTitle>
-          <CardDescription>How aggressive should the scrubbing get?</CardDescription>
+          <CardTitle className="text-base font-display">Duplicate detection</CardTitle>
+          <CardDescription>Adjust scan precision and scope.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
@@ -137,9 +137,9 @@ export function SettingsView() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Excluded folders</CardTitle>
+          <CardTitle className="text-base font-display">Excluded folders</CardTitle>
           <CardDescription>
-            Folders Pickle Polish will never peek into.
+            Folders the optimizer will never scan.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
