@@ -67,6 +67,7 @@ import {
   type HistoryEntry,
   type FileType,
 } from "@/lib/pickle-data";
+import logoAsset from "@/assets/pickle-polish-logo.png.asset.json";
 
 export const Route = createFileRoute("/")({
   component: PickleApp,
@@ -253,7 +254,7 @@ function PickleApp() {
                 <Sparkles className="h-4 w-4" /> Prototype
               </div>
               <p className="mt-1 text-muted-foreground">
-                Web demo of Scrubbing Pickles. Native cleanup needs Android APIs — see Roadmap.
+                Web demo of Pickle Polish. Native cleanup needs Android APIs — see Roadmap.
               </p>
             </div>
           </aside>
@@ -341,7 +342,7 @@ function PickleApp() {
               Review before deleting
             </DialogTitle>
             <DialogDescription>
-              Scrubbing Pickles will move these files to a recoverable bin. You can undo right
+              Pickle Polish will move these files to a recoverable bin. You can undo right
               after.
             </DialogDescription>
           </DialogHeader>
@@ -393,20 +394,22 @@ function PickleApp() {
 
 function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
-    <div className="flex items-center gap-2">
-      <div className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-emerald-600 shadow-lg shadow-primary/20">
-        <span className="text-lg">🥒</span>
-        <Sparkles className="absolute -right-1 -top-1 h-4 w-4 text-yellow-400 drop-shadow" />
-      </div>
-      {!compact && (
+    <div className="flex items-center gap-2.5">
+      <img
+        src={logoAsset.url}
+        alt="Pickle Polish logo"
+        className="h-11 w-11 rounded-2xl object-cover shadow-md shadow-primary/20 ring-1 ring-border"
+      />
+      {!compact ? (
         <div>
-          <div className="text-base font-bold leading-tight">Scrubbing Pickles</div>
+          <div className="text-base font-bold leading-tight tracking-tight">Pickle Polish</div>
           <div className="text-[11px] text-muted-foreground">
             Pickle-clean your phone storage
           </div>
         </div>
+      ) : (
+        <div className="text-base font-bold tracking-tight">Pickle Polish</div>
       )}
-      {compact && <div className="text-base font-bold">Scrubbing Pickles</div>}
     </div>
   );
 }
@@ -418,7 +421,7 @@ function Onboarding({ onDone }: { onDone: () => void }) {
   const steps = [
     {
       icon: <span className="text-5xl">🥒</span>,
-      title: "Meet Scrubbing Pickles",
+      title: "Meet Pickle Polish",
       body: "A tiny green scrubber for your phone storage. We find duplicates, junk, and stale files, and let you clean with confidence.",
     },
     {
@@ -1028,7 +1031,7 @@ function SettingsView({
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold md:text-3xl">Settings</h1>
-        <p className="text-sm text-muted-foreground">Tune Scrubbing Pickles to your taste.</p>
+        <p className="text-sm text-muted-foreground">Tune Pickle Polish to your taste.</p>
       </div>
 
       <Card>
@@ -1115,7 +1118,7 @@ function SettingsView({
         <CardHeader>
           <CardTitle className="text-base">Excluded folders</CardTitle>
           <CardDescription>
-            Folders Scrubbing Pickles will never peek into.
+            Folders Pickle Polish will never peek into.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -1216,7 +1219,7 @@ function Roadmap() {
       <div>
         <h1 className="text-2xl font-bold md:text-3xl">Native Android roadmap</h1>
         <p className="text-sm text-muted-foreground">
-          What Scrubbing Pickles becomes on-device.
+          What Pickle Polish becomes on-device.
         </p>
       </div>
       <div className="grid gap-3 md:grid-cols-2">
