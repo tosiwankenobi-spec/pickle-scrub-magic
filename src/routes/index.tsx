@@ -136,18 +136,21 @@ function Dashboard() {
                 ? "Undoing…"
                 : scanUndoStatus === "success"
                   ? "Undo succeeded"
-                  : scanUndoStatus === "error"
-                    ? "Undo failed — tap to retry"
-                    : scanStatus === "error"
-                      ? "Cancel failed"
-                      : scanStatus === "cancelling"
-                        ? "Cancelling…"
-                        : scanning
-                          ? "Tap to cancel scan"
-                          : scanStatus === "cancelled"
-                            ? "Cancelled"
-                            : "Find duplicates and junk"
+                  : scanUndoStatus === "retry-error"
+                    ? "Retry failed — tap to retry again"
+                    : scanUndoStatus === "error"
+                      ? "Undo failed — tap to retry"
+                      : scanStatus === "error"
+                        ? "Cancel failed"
+                        : scanStatus === "cancelling"
+                          ? "Cancelling…"
+                          : scanning
+                            ? "Tap to cancel scan"
+                            : scanStatus === "cancelled"
+                              ? "Cancelled"
+                              : "Find duplicates and junk"
           }
+
 
 
 
@@ -156,7 +159,7 @@ function Dashboard() {
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
             ) : scanUndoStatus === "success" ? (
               <CheckCircle2 className="h-10 w-10 text-emerald-500" />
-            ) : scanUndoStatus === "error" ? (
+            ) : scanUndoStatus === "retry-error" || scanUndoStatus === "error" ? (
               <XCircle className="h-10 w-10 text-destructive" />
             ) : scanStatus === "cancelling" ? (
               <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -168,8 +171,9 @@ function Dashboard() {
           }
 
 
+
           onClick={() => {
-            if (scanUndoStatus === "error") {
+            if (scanUndoStatus === "error" || scanUndoStatus === "retry-error") {
               undoScanAction(true);
             } else if (scanning) {
               if (confirm("Cancel the scan?")) cancelScan();
@@ -177,6 +181,7 @@ function Dashboard() {
               startScan();
             }
           }}
+
 
 
           badge={scanning ? `${scanProgress}%` : undefined}
