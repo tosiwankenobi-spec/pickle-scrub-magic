@@ -99,6 +99,8 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
   const scanTimer = useRef<number | null>(null);
   const statusTimer = useRef<number | null>(null);
+  const undoStatusTimer = useRef<number | null>(null);
+
 
   useEffect(() => {
     scanProgressRef.current = scanProgress;
