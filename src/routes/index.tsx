@@ -95,6 +95,13 @@ function Dashboard() {
       : "Stop scan"
     : "";
 
+  const scanButtonDisabled =
+    scanStatus === "cancelling" ||
+    scanUndoStatus === "undoing" ||
+    scanUndoStatus === "retrying";
+  const retryButtonDisabled =
+    scanUndoStatus === "undoing" || scanUndoStatus === "retrying";
+
   const scanCardDescription =
     scanUndoStatus === "retrying"
       ? "Retrying…"
@@ -120,6 +127,15 @@ function Dashboard() {
     <div className="space-y-6">
       <span className="sr-only" aria-live="polite" aria-atomic="true">
         {scanCardDescription}
+      </span>
+      <span className="sr-only" aria-live="polite" aria-atomic="true">
+        {scanButtonDisabled && retryButtonDisabled
+          ? "Scan and Retry buttons disabled"
+          : scanButtonDisabled
+            ? "Scan button disabled"
+            : retryButtonDisabled
+              ? "Retry button disabled"
+              : "Scan and Retry buttons enabled"}
       </span>
 
       {/* Header */}
