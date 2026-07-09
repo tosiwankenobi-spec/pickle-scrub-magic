@@ -301,8 +301,15 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   };
 
   const undoScanAction = () => {
+    if (scanUndoStatus === "undoing") return;
+    setScanUndoStatus("undoing");
+    if (undoStatusTimer.current) window.clearTimeout(undoStatusTimer.current);
+
     setScanUndoStack((stack) => {
-      if (stack.length === 0) return stack;
+      if (stack.length === 0) {
+        setScanUndoStatus("idle");
+        return stack;
+      }
       const next = stack.slice(0, -1);
       const last = stack[stack.length - 1];
       // Restore the snapshot captured before that action.
@@ -317,7 +324,13 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
       }
       return next;
     });
+
+    undoStatusTimer.current = window.setTimeout(() => {
+      setScanUndoStatus("idle");
+      undoStatusTimer.current = null;
+    }, 600) as unknown as number;
   };
+
 
   const clearScanUndoHistory = () => setScanUndoStack([]);
 
