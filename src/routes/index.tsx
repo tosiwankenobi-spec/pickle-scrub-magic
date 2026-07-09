@@ -95,6 +95,13 @@ function Dashboard() {
       : "Stop scan"
     : "";
 
+  const scanButtonDisabled =
+    scanStatus === "cancelling" ||
+    scanUndoStatus === "undoing" ||
+    scanUndoStatus === "retrying";
+  const retryButtonDisabled =
+    scanUndoStatus === "undoing" || scanUndoStatus === "retrying";
+
   const scanCardDescription =
     scanUndoStatus === "retrying"
       ? "Retrying…"
@@ -120,6 +127,15 @@ function Dashboard() {
     <div className="space-y-6">
       <span className="sr-only" aria-live="polite" aria-atomic="true">
         {scanCardDescription}
+      </span>
+      <span className="sr-only" aria-live="polite" aria-atomic="true">
+        {scanButtonDisabled && retryButtonDisabled
+          ? "Scan and Retry buttons disabled"
+          : scanButtonDisabled
+            ? "Scan button disabled"
+            : retryButtonDisabled
+              ? "Retry button disabled"
+              : "Scan and Retry buttons enabled"}
       </span>
 
       {/* Header */}
@@ -205,11 +221,7 @@ function Dashboard() {
               startScan();
             }
           }}
-          disabled={
-            scanStatus === "cancelling" ||
-            scanUndoStatus === "undoing" ||
-            scanUndoStatus === "retrying"
-          }
+          disabled={scanButtonDisabled}
           className={`group relative col-span-1 row-span-2 overflow-hidden rounded-3xl bg-primary p-6 text-left text-primary-foreground transition focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background disabled:cursor-not-allowed disabled:opacity-80 md:col-span-1 md:row-span-2`}
         >
           <div className="flex h-full flex-col justify-between">
@@ -340,10 +352,11 @@ function Dashboard() {
                 size="sm"
                 variant="outline"
                 className="h-7 gap-1 px-2 text-xs"
+                disabled={retryButtonDisabled}
                 onClick={() => undoScanAction()}
               >
                 <Undo2 className="h-3.5 w-3.5" />
-                Undo · {undoLabel}
+                {retryButtonDisabled ? "Retrying…" : `Undo · ${undoLabel}`}
               </Button>
               <Button
                 size="sm"
