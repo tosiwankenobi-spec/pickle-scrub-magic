@@ -253,7 +253,7 @@ function PickleApp() {
                 <Sparkles className="h-4 w-4" /> Prototype
               </div>
               <p className="mt-1 text-muted-foreground">
-                Web demo of Scrubbing Pickles. Native cleanup needs Android APIs — see Roadmap.
+                Web demo of Pickle Polish. Native cleanup needs Android APIs — see Roadmap.
               </p>
             </div>
           </aside>
@@ -341,7 +341,7 @@ function PickleApp() {
               Review before deleting
             </DialogTitle>
             <DialogDescription>
-              Scrubbing Pickles will move these files to a recoverable bin. You can undo right
+              Pickle Polish will move these files to a recoverable bin. You can undo right
               after.
             </DialogDescription>
           </DialogHeader>
@@ -400,13 +400,13 @@ function BrandMark({ compact = false }: { compact?: boolean }) {
       </div>
       {!compact && (
         <div>
-          <div className="text-base font-bold leading-tight">Scrubbing Pickles</div>
+          <div className="text-base font-bold leading-tight">Pickle Polish</div>
           <div className="text-[11px] text-muted-foreground">
             Pickle-clean your phone storage
           </div>
         </div>
       )}
-      {compact && <div className="text-base font-bold">Scrubbing Pickles</div>}
+      {compact && <div className="text-base font-bold">Pickle Polish</div>}
     </div>
   );
 }
@@ -418,7 +418,7 @@ function Onboarding({ onDone }: { onDone: () => void }) {
   const steps = [
     {
       icon: <span className="text-5xl">🥒</span>,
-      title: "Meet Scrubbing Pickles",
+      title: "Meet Pickle Polish",
       body: "A tiny green scrubber for your phone storage. We find duplicates, junk, and stale files, and let you clean with confidence.",
     },
     {
@@ -1028,7 +1028,7 @@ function SettingsView({
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold md:text-3xl">Settings</h1>
-        <p className="text-sm text-muted-foreground">Tune Scrubbing Pickles to your taste.</p>
+        <p className="text-sm text-muted-foreground">Tune Pickle Polish to your taste.</p>
       </div>
 
       <Card>
@@ -1115,7 +1115,7 @@ function SettingsView({
         <CardHeader>
           <CardTitle className="text-base">Excluded folders</CardTitle>
           <CardDescription>
-            Folders Scrubbing Pickles will never peek into.
+            Folders Pickle Polish will never peek into.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -1216,7 +1216,7 @@ function Roadmap() {
       <div>
         <h1 className="text-2xl font-bold md:text-3xl">Native Android roadmap</h1>
         <p className="text-sm text-muted-foreground">
-          What Scrubbing Pickles becomes on-device.
+          What Pickle Polish becomes on-device.
         </p>
       </div>
       <div className="grid gap-3 md:grid-cols-2">
