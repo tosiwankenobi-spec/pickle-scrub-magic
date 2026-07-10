@@ -25,6 +25,8 @@ import {
   getScanButtonDisabled,
   getRetryButtonDisabled,
   getButtonStateAnnouncement,
+  getScanStatusTone,
+  type StatusTone,
 } from "@/lib/scan-announcements";
 
 export const Route = createFileRoute("/")({
