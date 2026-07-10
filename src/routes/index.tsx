@@ -20,7 +20,12 @@ import { AppShell } from "@/components/app-shell";
 import { usePickle } from "@/lib/pickle-context";
 import { TOTAL_STORAGE, USED_STORAGE, RECLAIMABLE, formatBytes } from "@/lib/pickle-data";
 import { CountUpBytes, LegendDot } from "@/components/pickle/shared";
-import { getScanCardDescription } from "@/lib/scan-announcements";
+import {
+  getScanCardDescription,
+  getScanButtonDisabled,
+  getRetryButtonDisabled,
+  getButtonStateAnnouncement,
+} from "@/lib/scan-announcements";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -119,17 +124,17 @@ function Dashboard() {
       : "Stop scan"
     : "";
 
-  const scanButtonDisabled =
-    scanStatus === "cancelling" ||
-    scanUndoStatus === "undoing" ||
-    scanUndoStatus === "retrying";
-  const retryButtonDisabled =
-    scanUndoStatus === "undoing" || scanUndoStatus === "retrying";
+  const scanButtonDisabled = getScanButtonDisabled(scanStatus, scanUndoStatus);
+  const retryButtonDisabled = getRetryButtonDisabled(scanUndoStatus);
 
   const scanCardDescription = getScanCardDescription(
     scanUndoStatus,
     scanStatus,
     scanning,
+  );
+  const buttonStateAnnouncement = getButtonStateAnnouncement(
+    scanButtonDisabled,
+    retryButtonDisabled,
   );
 
   return (
@@ -138,14 +143,9 @@ function Dashboard() {
         {scanCardDescription}
       </span>
       <span className="sr-only" aria-live="polite" aria-atomic="true">
-        {scanButtonDisabled && retryButtonDisabled
-          ? "Scan and Retry buttons disabled"
-          : scanButtonDisabled
-            ? "Scan button disabled"
-            : retryButtonDisabled
-              ? "Retry button disabled"
-              : "Scan and Retry buttons enabled"}
+        {buttonStateAnnouncement}
       </span>
+
 
       {/* Header */}
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:flex sm:flex-wrap sm:justify-between">

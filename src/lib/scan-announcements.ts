@@ -28,3 +28,29 @@ export function getScanCardDescription(
   if (scanStatus === "cancelled") return "Cancelled";
   return "Find duplicates and junk";
 }
+
+export function getScanButtonDisabled(
+  scanStatus: ScanStatus,
+  scanUndoStatus: ScanUndoStatus,
+): boolean {
+  return (
+    scanStatus === "cancelling" ||
+    scanUndoStatus === "undoing" ||
+    scanUndoStatus === "retrying"
+  );
+}
+
+export function getRetryButtonDisabled(scanUndoStatus: ScanUndoStatus): boolean {
+  return scanUndoStatus === "undoing" || scanUndoStatus === "retrying";
+}
+
+export function getButtonStateAnnouncement(
+  scanButtonDisabled: boolean,
+  retryButtonDisabled: boolean,
+): string {
+  if (scanButtonDisabled && retryButtonDisabled)
+    return "Scan and Retry buttons disabled";
+  if (scanButtonDisabled) return "Scan button disabled";
+  if (retryButtonDisabled) return "Retry button disabled";
+  return "Scan and Retry buttons enabled";
+}
