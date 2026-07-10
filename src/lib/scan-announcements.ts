@@ -54,3 +54,20 @@ export function getButtonStateAnnouncement(
   if (retryButtonDisabled) return "Retry button disabled";
   return "Scan and Retry buttons enabled";
 }
+
+export type StatusTone = "info" | "progress" | "success" | "error";
+
+export function getScanStatusTone(
+  scanUndoStatus: ScanUndoStatus,
+  scanStatus: ScanStatus,
+  scanning: boolean,
+): StatusTone {
+  if (scanUndoStatus === "retrying" || scanUndoStatus === "undoing")
+    return "progress";
+  if (scanUndoStatus === "success") return "success";
+  if (scanUndoStatus === "retry-error" || scanUndoStatus === "error")
+    return "error";
+  if (scanStatus === "error") return "error";
+  if (scanStatus === "cancelling" || scanning) return "progress";
+  return "info";
+}
