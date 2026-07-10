@@ -25,11 +25,58 @@ import {
   getScanButtonDisabled,
   getRetryButtonDisabled,
   getButtonStateAnnouncement,
+  getScanStatusTone,
+  type StatusTone,
 } from "@/lib/scan-announcements";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
 });
+
+function ScanStatusLine({
+  tone,
+  message,
+  secondary,
+}: {
+  tone: StatusTone;
+  message: string;
+  secondary: string;
+}) {
+  const toneClasses: Record<StatusTone, string> = {
+    info: "bg-primary-foreground/10 text-primary-foreground/80 ring-primary-foreground/15",
+    progress:
+      "bg-primary-foreground/15 text-primary-foreground ring-primary-foreground/25",
+    success:
+      "bg-emerald-400/20 text-emerald-50 ring-emerald-300/30",
+    error: "bg-red-400/20 text-red-50 ring-red-300/40",
+  };
+  const Icon =
+    tone === "progress"
+      ? Loader2
+      : tone === "success"
+        ? CheckCircle2
+        : tone === "error"
+          ? XCircle
+          : Search;
+  return (
+    <div
+      // aria-hidden: the sr-only aria-live regions at the top of the page
+      // are the authoritative source; this line mirrors them visually.
+      aria-hidden="true"
+      className={`mt-3 inline-flex max-w-full items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium ring-1 ring-inset transition-colors ${toneClasses[tone]}`}
+    >
+      <Icon
+        className={`h-3.5 w-3.5 shrink-0 ${tone === "progress" ? "animate-spin" : ""}`}
+      />
+      <span className="truncate">{message}</span>
+      <span className="hidden text-primary-foreground/60 sm:inline">·</span>
+      <span className="hidden truncate text-primary-foreground/60 sm:inline">
+        {secondary}
+      </span>
+    </div>
+  );
+}
+
 
 function HomePage() {
   const [onboarded, setOnboarded] = useState(false);
@@ -136,15 +183,19 @@ function Dashboard() {
     scanButtonDisabled,
     retryButtonDisabled,
   );
+  const scanStatusTone = getScanStatusTone(scanUndoStatus, scanStatus, scanning);
 
   return (
     <div className="space-y-6">
+      {/* Screen-reader only regions. The visible ScanStatusLine mirrors these
+          but is aria-hidden to avoid double announcements. */}
       <span className="sr-only" aria-live="polite" aria-atomic="true">
         {scanCardDescription}
       </span>
       <span className="sr-only" aria-live="polite" aria-atomic="true">
         {buttonStateAnnouncement}
       </span>
+
 
 
       {/* Header */}
@@ -261,6 +312,11 @@ function Dashboard() {
                 )}
               </div>
               <p className="mt-1 text-sm text-primary-foreground/70">{scanCardDescription}</p>
+              <ScanStatusLine
+                tone={scanStatusTone}
+                message={scanCardDescription}
+                secondary={buttonStateAnnouncement}
+              />
             </div>
           </div>
         </button>
