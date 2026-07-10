@@ -142,12 +142,15 @@ function Dashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Screen-reader only regions. The visible ScanStatusLine mirrors these
+          but is aria-hidden to avoid double announcements. */}
       <span className="sr-only" aria-live="polite" aria-atomic="true">
         {scanCardDescription}
       </span>
       <span className="sr-only" aria-live="polite" aria-atomic="true">
         {buttonStateAnnouncement}
       </span>
+
 
 
       {/* Header */}
