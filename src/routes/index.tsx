@@ -138,6 +138,7 @@ function Dashboard() {
     scanButtonDisabled,
     retryButtonDisabled,
   );
+  const scanStatusTone = getScanStatusTone(scanUndoStatus, scanStatus, scanning);
 
   return (
     <div className="space-y-6">
