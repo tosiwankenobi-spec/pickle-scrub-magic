@@ -144,22 +144,38 @@ function Dashboard() {
 
   // Return focus to the control that started the undo/retry once the
   // operation completes or fails, so keyboard users are not left stranded.
+  // We only reclaim focus if the user hasn't moved it elsewhere in the
+  // meantime — checked by seeing if activeElement is body/null or is one
+  // of our own (possibly disabled) trigger buttons.
   useEffect(() => {
     if (
-      scanUndoStatus === "success" ||
-      scanUndoStatus === "error" ||
-      scanUndoStatus === "retry-error"
+      scanUndoStatus !== "success" &&
+      scanUndoStatus !== "error" &&
+      scanUndoStatus !== "retry-error"
     ) {
-      window.setTimeout(() => {
-        if (undoTriggerRef.current === "retry-button" && retryButtonRef.current) {
-          retryButtonRef.current.focus();
-        } else if (scanCardRef.current) {
-          scanCardRef.current.focus();
-        }
-        undoTriggerRef.current = null;
-      }, 0);
+      return;
     }
+    const id = window.setTimeout(() => {
+      const active = document.activeElement;
+      const ours =
+        active === document.body ||
+        active === null ||
+        active === scanCardRef.current ||
+        active === retryButtonRef.current;
+      if (!ours) {
+        undoTriggerRef.current = null;
+        return;
+      }
+      const target =
+        undoTriggerRef.current === "retry-button" && retryButtonRef.current
+          ? retryButtonRef.current
+          : scanCardRef.current;
+      target?.focus({ preventScroll: true });
+      undoTriggerRef.current = null;
+    }, 0);
+    return () => window.clearTimeout(id);
   }, [scanUndoStatus]);
+
 
   const usedPct = (USED_STORAGE / TOTAL_STORAGE) * 100;
   const reclaimPct = (RECLAIMABLE / TOTAL_STORAGE) * 100;
