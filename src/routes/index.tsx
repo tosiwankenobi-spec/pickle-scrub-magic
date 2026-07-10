@@ -264,6 +264,11 @@ function Dashboard() {
                 )}
               </div>
               <p className="mt-1 text-sm text-primary-foreground/70">{scanCardDescription}</p>
+              <ScanStatusLine
+                tone={scanStatusTone}
+                message={scanCardDescription}
+                secondary={buttonStateAnnouncement}
+              />
             </div>
           </div>
         </button>
