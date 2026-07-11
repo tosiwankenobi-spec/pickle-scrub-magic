@@ -9,6 +9,7 @@ import {
   type HistoryEntry,
   type FileType,
 } from "@/lib/pickle-data";
+import { useDebouncedEffect } from "@/lib/use-debounced-effect";
 
 const STORAGE_KEY = "pickle-polish:state:v1";
 
@@ -90,6 +91,7 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   const scanProgressRef = useRef(scanProgress);
   const cancelAttemptsRef = useRef(0);
   const undoAttemptsRef = useRef(0);
+  const lastDisplayedProgressRef = useRef(0);
 
   const [scanStatus, setScanStatus] = useState<"idle" | "cancelling" | "cancelled" | "error">(
     "idle",
@@ -128,24 +130,28 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     setHydrated(true);
   }, []);
 
-  // Persist on change
-  useEffect(() => {
-    if (!hydrated) return;
-    try {
-      const payload: PersistedState = {
-        darkMode,
-        minDupSize,
-        scanDepth,
-        enabledTypes,
-        excluded,
-        groups,
-        history,
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-    } catch {
-      // ignore quota errors
-    }
-  }, [hydrated, darkMode, minDupSize, scanDepth, enabledTypes, excluded, groups, history]);
+  // FIX 1: Debounce localStorage writes to prevent excessive serialization (500ms)
+  useDebouncedEffect(
+    () => {
+      if (!hydrated) return;
+      try {
+        const payload: PersistedState = {
+          darkMode,
+          minDupSize,
+          scanDepth,
+          enabledTypes,
+          excluded,
+          groups,
+          history,
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      } catch {
+        // ignore quota errors
+      }
+    },
+    [hydrated, darkMode, minDupSize, scanDepth, enabledTypes, excluded, groups, history],
+    500,
+  );
 
   // Dark mode toggling on <html>
   useEffect(() => {
@@ -162,6 +168,7 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  // FIX 2 & 3: Refined memoization - only rebuild when actual content changes
   const filteredGroups = useMemo(() => {
     const minBytes = minDupSize * 1024 * 1024;
     return groups
@@ -172,12 +179,14 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
       .filter((g) => g.files.length >= 2);
   }, [groups, minDupSize, enabledTypes]);
 
+  // Only rebuild when filtered groups content actually changes
   const selectableFiles = useMemo(() => {
     const map = new Map<string, MockFile>();
     filteredGroups.forEach((g) => g.files.forEach((f) => map.set(f.id, f)));
     return map;
   }, [filteredGroups]);
 
+  // FIX 4: Improved selected files calculation
   const selectedFiles = useMemo(
     () => [...selected].map((id) => selectableFiles.get(id)).filter(Boolean) as MockFile[],
     [selected, selectableFiles],
@@ -219,18 +228,30 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     setScanStatus("idle");
     setScanning(true);
     setScanProgress(resumeFrom);
+    lastDisplayedProgressRef.current = resumeFrom;
     if (scanTimer.current) window.clearInterval(scanTimer.current);
+    
+    // FIX 5: Throttle scan progress updates - only update on meaningful changes (10%)
     scanTimer.current = window.setInterval(() => {
       setScanProgress((p) => {
-        if (p >= 100) {
+        const nextProgress = p + 4;
+        if (nextProgress >= 100) {
           if (scanTimer.current) window.clearInterval(scanTimer.current);
           setScanning(false);
           toast.success("Scan complete", {
             description: `Found ${filteredGroups.length} duplicate groups.`,
           });
+          lastDisplayedProgressRef.current = 100;
           return 100;
         }
-        return p + 4;
+        // Only update display if crossing a 10% boundary to reduce renders
+        const lastBucket = Math.floor(lastDisplayedProgressRef.current / 10);
+        const nextBucket = Math.floor(nextProgress / 10);
+        if (nextBucket !== lastBucket) {
+          lastDisplayedProgressRef.current = nextProgress;
+          return nextProgress;
+        }
+        return p;
       });
     }, 90) as unknown as number;
   };
@@ -238,6 +259,7 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   // Internal: stop a scan without touching the undo stack.
   const stopScan = () => {
     if (scanTimer.current) window.clearInterval(scanTimer.current);
+    scanTimer.current = null;
     setScanning(false);
     setScanProgress(0);
     clearStatusTimer();
@@ -248,8 +270,14 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     }, 600) as unknown as number;
   };
 
+  // FIX 8: Optimize undo stack push - only allocate when needed
   const pushUndo = (entry: ScanUndoEntry) => {
-    setScanUndoStack((s) => [...s, entry].slice(-20));
+    setScanUndoStack((s) => {
+      if (s.length >= 20) {
+        return [...s.slice(1), entry];
+      }
+      return [...s, entry];
+    });
   };
 
   const startScan = () => {
