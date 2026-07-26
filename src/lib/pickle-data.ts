@@ -16,6 +16,7 @@ export type DuplicateGroup = {
   id: string;
   label: string;
   type: FileType;
+  matchType?: "exact" | "similar";
   files: MockFile[];
 };
 
@@ -257,3 +258,276 @@ export const initialHistory: HistoryEntry[] = [
     files: 92,
   },
 ];
+
+/* ------------------------------------------------------------------ */
+/* Similar photos (near-duplicates, not exact hash matches)            */
+/* ------------------------------------------------------------------ */
+
+export const similarGroups: DuplicateGroup[] = [
+  {
+    id: "s1",
+    label: "Rooftop burst — 5 frames",
+    type: "image",
+    matchType: "similar",
+    files: [
+      {
+        id: "s1f1",
+        name: "IMG_20250901_181203.jpg",
+        type: "image",
+        size: 5.1 * MB,
+        location: "/DCIM/Camera",
+        modified: "2025-09-01T18:12:03Z",
+        confidence: 0.96,
+        recommended: true,
+        hash: "sim-r1",
+      },
+      {
+        id: "s1f2",
+        name: "IMG_20250901_181204.jpg",
+        type: "image",
+        size: 5.0 * MB,
+        location: "/DCIM/Camera",
+        modified: "2025-09-01T18:12:04Z",
+        confidence: 0.94,
+        hash: "sim-r2",
+      },
+      {
+        id: "s1f3",
+        name: "IMG_20250901_181205.jpg",
+        type: "image",
+        size: 4.9 * MB,
+        location: "/DCIM/Camera",
+        modified: "2025-09-01T18:12:05Z",
+        confidence: 0.91,
+        hash: "sim-r3",
+      },
+      {
+        id: "s1f4",
+        name: "IMG_20250901_181206.jpg",
+        type: "image",
+        size: 5.0 * MB,
+        location: "/DCIM/Camera",
+        modified: "2025-09-01T18:12:06Z",
+        confidence: 0.88,
+        hash: "sim-r4",
+      },
+    ],
+  },
+  {
+    id: "s2",
+    label: "Recompressed shares — city skyline",
+    type: "image",
+    matchType: "similar",
+    files: [
+      {
+        id: "s2f1",
+        name: "skyline_original.jpg",
+        type: "image",
+        size: 8.4 * MB,
+        location: "/Pictures",
+        modified: "2025-04-11T20:01:00Z",
+        confidence: 0.93,
+        recommended: true,
+        hash: "sim-c1",
+      },
+      {
+        id: "s2f2",
+        name: "IMG-20250412-WA0007.jpg",
+        type: "image",
+        size: 1.2 * MB,
+        location: "/Download/WhatsApp Images",
+        modified: "2025-04-12T09:20:00Z",
+        confidence: 0.85,
+        hash: "sim-c2",
+      },
+      {
+        id: "s2f3",
+        name: "skyline_insta.jpg",
+        type: "image",
+        size: 2.3 * MB,
+        location: "/Pictures/Instagram",
+        modified: "2025-04-12T11:45:00Z",
+        confidence: 0.79,
+        hash: "sim-c3",
+      },
+    ],
+  },
+  {
+    id: "s3",
+    label: "Edited portraits — filter variants",
+    type: "image",
+    matchType: "similar",
+    files: [
+      {
+        id: "s3f1",
+        name: "portrait_raw.jpg",
+        type: "image",
+        size: 6.7 * MB,
+        location: "/DCIM/Camera",
+        modified: "2025-02-20T15:30:00Z",
+        confidence: 0.95,
+        recommended: true,
+        hash: "sim-p1",
+      },
+      {
+        id: "s3f2",
+        name: "portrait_warm.jpg",
+        type: "image",
+        size: 6.4 * MB,
+        location: "/Pictures/Edited",
+        modified: "2025-02-20T16:02:00Z",
+        confidence: 0.83,
+        hash: "sim-p2",
+      },
+      {
+        id: "s3f3",
+        name: "portrait_bw.jpg",
+        type: "image",
+        size: 6.1 * MB,
+        location: "/Pictures/Edited",
+        modified: "2025-02-20T16:06:00Z",
+        confidence: 0.76,
+        hash: "sim-p3",
+      },
+    ],
+  },
+];
+
+/* ------------------------------------------------------------------ */
+/* Large files (any type) with adjustable threshold                    */
+/* ------------------------------------------------------------------ */
+
+export const LARGE_FILE_THRESHOLDS = [100, 250, 500, 1024] as const;
+export type LargeFileThreshold = (typeof LARGE_FILE_THRESHOLDS)[number];
+
+export function thresholdLabel(mb: number): string {
+  return mb >= 1024 ? `${mb / 1024} GB+` : `${mb} MB+`;
+}
+
+export const largeFiles: MockFile[] = [
+  {
+    id: "l1",
+    name: "hawaii_trip_4k.mov",
+    type: "video",
+    size: 3.2 * 1024 * MB,
+    location: "/DCIM/Camera",
+    modified: "2025-05-02T10:00:00Z",
+    confidence: 1,
+    hash: "lf1",
+  },
+  {
+    id: "l2",
+    name: "concert_full_set.mp4",
+    type: "video",
+    size: 1.7 * 1024 * MB,
+    location: "/Movies",
+    modified: "2025-03-19T22:10:00Z",
+    confidence: 1,
+    hash: "lf2",
+  },
+  {
+    id: "l3",
+    name: "drone_flyover.mp4",
+    type: "video",
+    size: 940 * MB,
+    location: "/DCIM/Drone",
+    modified: "2025-06-11T08:44:00Z",
+    confidence: 1,
+    hash: "lf3",
+  },
+  {
+    id: "l4",
+    name: "GameHub.apk",
+    type: "app",
+    size: 780 * MB,
+    location: "/Download",
+    modified: "2025-01-28T13:00:00Z",
+    confidence: 1,
+    hash: "lf4",
+  },
+  {
+    id: "l5",
+    name: "architecture_scans.zip",
+    type: "document",
+    size: 610 * MB,
+    location: "/Documents/Archive",
+    modified: "2024-12-04T17:20:00Z",
+    confidence: 1,
+    hash: "lf5",
+  },
+  {
+    id: "l6",
+    name: "panorama_master.tiff",
+    type: "image",
+    size: 420 * MB,
+    location: "/Pictures/RAW",
+    modified: "2025-07-09T12:00:00Z",
+    confidence: 1,
+    hash: "lf6",
+  },
+  {
+    id: "l7",
+    name: "podcast_masters.wav",
+    type: "audio",
+    size: 380 * MB,
+    location: "/Music/Projects",
+    modified: "2025-08-15T09:30:00Z",
+    confidence: 1,
+    hash: "lf7",
+  },
+  {
+    id: "l8",
+    name: "thesis_final_with_media.pdf",
+    type: "document",
+    size: 290 * MB,
+    location: "/Documents",
+    modified: "2025-02-02T19:00:00Z",
+    confidence: 1,
+    hash: "lf8",
+  },
+  {
+    id: "l9",
+    name: "wedding_raw_batch.zip",
+    type: "image",
+    size: 260 * MB,
+    location: "/Pictures/RAW",
+    modified: "2024-11-22T15:15:00Z",
+    confidence: 1,
+    hash: "lf9",
+  },
+  {
+    id: "l10",
+    name: "OfflineMaps_EU.obb",
+    type: "app",
+    size: 180 * MB,
+    location: "/Android/obb",
+    modified: "2025-04-30T07:05:00Z",
+    confidence: 1,
+    hash: "lf10",
+  },
+  {
+    id: "l11",
+    name: "screen_recording_lecture.mp4",
+    type: "video",
+    size: 150 * MB,
+    location: "/Movies/Recordings",
+    modified: "2025-09-12T11:11:00Z",
+    confidence: 1,
+    hash: "lf11",
+  },
+  {
+    id: "l12",
+    name: "family_album_export.zip",
+    type: "image",
+    size: 120 * MB,
+    location: "/Download",
+    modified: "2025-05-25T18:40:00Z",
+    confidence: 1,
+    hash: "lf12",
+  },
+];
+
+export function largeFilesAbove(thresholdMb: number): MockFile[] {
+  const bytes = thresholdMb * MB;
+  return largeFiles.filter((f) => f.size >= bytes).sort((a, b) => b.size - a.size);
+}

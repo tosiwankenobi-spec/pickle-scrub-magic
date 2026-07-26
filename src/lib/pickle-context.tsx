@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useRef, useState 
 import { toast } from "sonner";
 import {
   duplicateGroups as seedGroups,
+  similarGroups as seedSimilarGroups,
   initialHistory,
   formatBytes,
   type DuplicateGroup,
@@ -26,6 +27,17 @@ export type PickleContextType = {
   setExcluded: React.Dispatch<React.SetStateAction<string[]>>;
   groups: DuplicateGroup[];
   setGroups: React.Dispatch<React.SetStateAction<DuplicateGroup[]>>;
+  similarGroups: DuplicateGroup[];
+  similarSelected: Set<string>;
+  similarSelectedFiles: MockFile[];
+  similarReclaimable: number;
+  similarCount: number;
+  toggleSimilarFile: (id: string) => void;
+  selectAllSimilarExceptRecommended: () => void;
+  clearSimilarSelection: () => void;
+  confirmDeleteSimilar: () => void;
+  largeFileThreshold: number;
+  setLargeFileThreshold: (v: number) => void;
   history: HistoryEntry[];
   setHistory: React.Dispatch<React.SetStateAction<HistoryEntry[]>>;
   selected: Set<string>;
@@ -67,6 +79,7 @@ type PersistedState = {
   excluded: string[];
   groups: DuplicateGroup[];
   history: HistoryEntry[];
+  largeFileThreshold: number;
 };
 
 const PickleContext = createContext<PickleContextType | null>(null);
@@ -84,6 +97,9 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   });
   const [excluded, setExcluded] = useState<string[]>(["/Android/data", "/WhatsApp/Backups"]);
   const [groups, setGroups] = useState<DuplicateGroup[]>(seedGroups);
+  const [similarGroups, setSimilarGroups] = useState<DuplicateGroup[]>(seedSimilarGroups);
+  const [similarSelected, setSimilarSelected] = useState<Set<string>>(new Set());
+  const [largeFileThreshold, setLargeFileThreshold] = useState(500); // MB
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [history, setHistory] = useState<HistoryEntry[]>(initialHistory);
   const [scanning, setScanning] = useState(false);
@@ -123,6 +139,7 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
         if (Array.isArray(s.excluded)) setExcluded(s.excluded);
         if (Array.isArray(s.groups)) setGroups(s.groups);
         if (Array.isArray(s.history)) setHistory(s.history);
+        if (typeof s.largeFileThreshold === "number") setLargeFileThreshold(s.largeFileThreshold);
       }
     } catch {
       // ignore
@@ -143,13 +160,24 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
           excluded,
           groups,
           history,
+          largeFileThreshold,
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
       } catch {
         // ignore quota errors
       }
     },
-    [hydrated, darkMode, minDupSize, scanDepth, enabledTypes, excluded, groups, history],
+    [
+      hydrated,
+      darkMode,
+      minDupSize,
+      scanDepth,
+      enabledTypes,
+      excluded,
+      groups,
+      history,
+      largeFileThreshold,
+    ],
     500,
   );
 
@@ -214,6 +242,78 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
   };
 
   const clearSelection = () => setSelected(new Set());
+
+  /* ---------------- Similar photos (near-duplicates) ---------------- */
+
+  const similarSelectableFiles = useMemo(() => {
+    const map = new Map<string, MockFile>();
+    similarGroups.forEach((g) => g.files.forEach((f) => map.set(f.id, f)));
+    return map;
+  }, [similarGroups]);
+
+  const similarSelectedFiles = useMemo(
+    () =>
+      [...similarSelected]
+        .map((id) => similarSelectableFiles.get(id))
+        .filter(Boolean) as MockFile[],
+    [similarSelected, similarSelectableFiles],
+  );
+  const similarReclaimable = similarSelectedFiles.reduce((n, f) => n + f.size, 0);
+  const similarCount = similarGroups.reduce((n, g) => n + Math.max(0, g.files.length - 1), 0);
+
+  const toggleSimilarFile = (id: string) => {
+    setSimilarSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const selectAllSimilarExceptRecommended = () => {
+    const next = new Set<string>();
+    similarGroups.forEach((g) =>
+      g.files.forEach((f) => {
+        if (!f.recommended) next.add(f.id);
+      }),
+    );
+    setSimilarSelected(next);
+  };
+
+  const clearSimilarSelection = () => setSimilarSelected(new Set());
+
+  const confirmDeleteSimilar = () => {
+    const removed = similarSelectedFiles;
+    if (removed.length === 0) return;
+    const removedBytes = similarReclaimable;
+    const prevGroups = similarGroups;
+    setSimilarGroups((prev) =>
+      prev
+        .map((g) => ({ ...g, files: g.files.filter((f) => !similarSelected.has(f.id)) }))
+        .filter((g) => g.files.length > 0),
+    );
+    clearSimilarSelection();
+    const entry: HistoryEntry = {
+      id: `h${Date.now()}`,
+      when: new Date().toISOString(),
+      action: `Removed ${removed.length} similar photo${removed.length === 1 ? "" : "s"}`,
+      reclaimed: removedBytes,
+      files: removed.length,
+    };
+    setHistory((h) => [entry, ...h]);
+    toast.success(`Reclaimed ${formatBytes(removedBytes)}`, {
+      description: `${removed.length} similar photo${removed.length === 1 ? "" : "s"} cleaned.`,
+      action: {
+        label: "Undo",
+        onClick: () => {
+          setSimilarGroups(prevGroups);
+          setHistory((h) => h.filter((x) => x.id !== entry.id));
+          toast("Restored", { description: "Similar photos back in place." });
+        },
+      },
+      duration: 6000,
+    });
+  };
 
   const clearStatusTimer = () => {
     if (statusTimer.current) {
@@ -431,6 +531,17 @@ export function PickleProvider({ children }: { children: React.ReactNode }) {
     setExcluded,
     groups,
     setGroups,
+    similarGroups,
+    similarSelected,
+    similarSelectedFiles,
+    similarReclaimable,
+    similarCount,
+    toggleSimilarFile,
+    selectAllSimilarExceptRecommended,
+    clearSimilarSelection,
+    confirmDeleteSimilar,
+    largeFileThreshold,
+    setLargeFileThreshold,
     history,
     setHistory,
     selected,

@@ -2,14 +2,34 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { cleanupCategories, formatBytes } from "@/lib/pickle-data";
+import {
+  cleanupCategories,
+  formatBytes,
+  largeFilesAbove,
+  thresholdLabel,
+} from "@/lib/pickle-data";
 import { usePickle } from "@/lib/pickle-context";
 import { Wind as BroomIcon } from "lucide-react";
 import { toast } from "sonner";
 import { CategoryIcon } from "@/components/pickle/shared";
 
 export function SmartCleanup() {
+  const { largeFileThreshold } = usePickle();
   const [selectedCats, setSelectedCats] = useState<Set<string>>(new Set(["junk", "screenshots"]));
+
+  // "Large videos" is generalised into a dynamic "Large files" category that
+  // follows the threshold configured in Settings.
+  const categories = cleanupCategories.map((c) => {
+    if (c.id !== "videos") return c;
+    const matches = largeFilesAbove(largeFileThreshold);
+    return {
+      ...c,
+      name: "Large files",
+      description: `Any file type at or above ${thresholdLabel(largeFileThreshold)}.`,
+      size: matches.reduce((n, f) => n + f.size, 0),
+      count: matches.length,
+    };
+  });
   const toggle = (id: string) => {
     setSelectedCats((prev) => {
       const next = new Set(prev);
@@ -18,7 +38,7 @@ export function SmartCleanup() {
       return next;
     });
   };
-  const total = cleanupCategories
+  const total = categories
     .filter((c) => selectedCats.has(c.id))
     .reduce((n, c) => n + c.size, 0);
 
@@ -29,7 +49,7 @@ export function SmartCleanup() {
         <p className="text-sm text-muted-foreground">Select categories to reclaim space safely.</p>
       </div>
       <div className="grid gap-3 md:grid-cols-2">
-        {cleanupCategories.map((c) => {
+        {categories.map((c) => {
           const active = selectedCats.has(c.id);
           return (
             <Card
