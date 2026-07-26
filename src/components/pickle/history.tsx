@@ -1,22 +1,41 @@
 import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Wind as BroomIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Wind as BroomIcon, Download } from "lucide-react";
 import { formatBytes, type HistoryEntry } from "@/lib/pickle-data";
+import { exportHistoryCsv, exportHistoryJson } from "@/lib/export-utils";
 
 export function HistoryView({ entries }: { entries: HistoryEntry[] }) {
   // Memoize total reclaimed calculation
-  const totalReclaimed = useMemo(
-    () => entries.reduce((n, e) => n + e.reclaimed, 0),
-    [entries],
-  );
+  const totalReclaimed = useMemo(() => entries.reduce((n, e) => n + e.reclaimed, 0), [entries]);
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold md:text-3xl font-display">Cleanup history</h1>
-        <p className="text-sm text-muted-foreground">
-          Logged locally. Total reclaimed: {formatBytes(totalReclaimed)}.
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold md:text-3xl font-display">Cleanup history</h1>
+          <p className="text-sm text-muted-foreground">
+            Logged locally. Total reclaimed: {formatBytes(totalReclaimed)}.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            className="gap-2"
+            disabled={entries.length === 0}
+            onClick={() => exportHistoryCsv(entries)}
+          >
+            <Download className="h-4 w-4" /> Export CSV
+          </Button>
+          <Button
+            variant="outline"
+            className="gap-2"
+            disabled={entries.length === 0}
+            onClick={() => exportHistoryJson(entries)}
+          >
+            <Download className="h-4 w-4" /> Export JSON
+          </Button>
+        </div>
       </div>
       <Card>
         <CardContent className="divide-y divide-border p-0">
