@@ -12,10 +12,19 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Folder, Loader2, Trash2, ShieldCheck, Check, Wind as BroomIcon } from "lucide-react";
+import {
+  Folder,
+  Loader2,
+  Trash2,
+  ShieldCheck,
+  Check,
+  Download,
+  Wind as BroomIcon,
+} from "lucide-react";
 import { formatBytes } from "@/lib/pickle-data";
 import { usePickle } from "@/lib/pickle-context";
 import { FileIcon } from "@/components/pickle/shared";
+import { exportFilesCsv } from "@/lib/export-utils";
 
 export function Duplicates() {
   const {
@@ -200,6 +209,14 @@ export function Duplicates() {
             <span className="font-semibold text-primary">{formatBytes(reclaimableSelected)}</span>
           </div>
           <DialogFooter className="gap-2 sm:gap-2">
+            <Button
+              variant="outline"
+              className="gap-2 sm:mr-auto"
+              disabled={selectedFiles.length === 0}
+              onClick={() => exportFilesCsv(selectedFiles, "pickle-polish-duplicates")}
+            >
+              <Download className="h-4 w-4" /> Export list (CSV)
+            </Button>
             <Button variant="outline" onClick={() => setConfirmOpen(false)}>
               Cancel
             </Button>

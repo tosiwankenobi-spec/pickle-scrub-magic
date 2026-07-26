@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import {
   Home,
   Copy,
+  Images,
   Wand2,
   History,
   Settings as SettingsIcon,
@@ -15,6 +16,7 @@ import { usePickle } from "@/lib/pickle-context";
 const NAV = [
   { to: "/", label: "Dashboard", icon: Home },
   { to: "/duplicates", label: "Duplicates", icon: Copy },
+  { to: "/similar", label: "Similar", icon: Images },
   { to: "/clean", label: "Cleanup", icon: Wand2 },
   { to: "/history", label: "History", icon: History },
   { to: "/settings", label: "Settings", icon: SettingsIcon },

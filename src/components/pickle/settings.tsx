@@ -15,7 +15,13 @@ import {
 } from "@/components/ui/select";
 import { Image as ImageIcon, Video, Music, FileText, Package, Moon, Sun } from "lucide-react";
 import { usePickle } from "@/lib/pickle-context";
-import { type FileType } from "@/lib/pickle-data";
+import {
+  type FileType,
+  LARGE_FILE_THRESHOLDS,
+  thresholdLabel,
+  largeFilesAbove,
+  formatBytes,
+} from "@/lib/pickle-data";
 
 export function SettingsView() {
   const {
@@ -29,6 +35,8 @@ export function SettingsView() {
     setExcluded,
     scanDepth,
     setScanDepth,
+    largeFileThreshold,
+    setLargeFileThreshold,
   } = usePickle();
   const [newExcluded, setNewExcluded] = useState("");
 
@@ -120,6 +128,38 @@ export function SettingsView() {
               ))}
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base font-display">Large files</CardTitle>
+          <CardDescription>
+            Minimum size a file must reach to be flagged as a large file.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Label htmlFor="large-file-threshold">Size threshold</Label>
+          <Select
+            value={String(largeFileThreshold)}
+            onValueChange={(v) => setLargeFileThreshold(Number(v))}
+          >
+            <SelectTrigger id="large-file-threshold">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {LARGE_FILE_THRESHOLDS.map((t) => (
+                <SelectItem key={t} value={String(t)}>
+                  {thresholdLabel(t)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <p aria-live="polite" className="text-xs text-muted-foreground">
+            {largeFilesAbove(largeFileThreshold).length} files match ·{" "}
+            {formatBytes(largeFilesAbove(largeFileThreshold).reduce((n, f) => n + f.size, 0))}{" "}
+            across images, video, audio, documents and apps.
+          </p>
         </CardContent>
       </Card>
 
