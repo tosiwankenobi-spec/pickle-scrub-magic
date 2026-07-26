@@ -16,6 +16,7 @@ export type DuplicateGroup = {
   id: string;
   label: string;
   type: FileType;
+  matchType?: "exact" | "similar";
   files: MockFile[];
 };
 
